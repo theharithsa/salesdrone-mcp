@@ -1,42 +1,42 @@
 {
   "$schema": "schemas/project.schema.json",
   "schemaVersion": 1,
-  "name": null,
+  "name": "SalesDrone MCP",
   "template": {
     "repository": "theharithsa/app-launchpad-template",
-    "revision": null,
+    "revision": "f04c042a9e000f606982863518fa7bb9cfbb7d85",
     "version": "1.9.0"
   },
   "decisions": {
     "product": {
-      "status": "needs-user-input",
-      "value": null,
-      "approval": null
+      "status": "approved",
+      "value": "Standalone read-only SalesDrone MCP npm package, extracted at the human request.",
+      "approval": "Human requested separate repository, npm automation, screenshots and Dynatrace/MCP observability in this chat; existing package stack/licence retained."
     },
     "stack": {
-      "status": "needs-user-input",
-      "value": null,
-      "approval": null
+      "status": "approved",
+      "value": "Node 22+, ESM JavaScript, official MCP SDK v2, scoped HTTP adapter; existing published package stack.",
+      "approval": "Human requested separate repository, npm automation, screenshots and Dynatrace/MCP observability in this chat; existing package stack/licence retained."
     },
     "hosting": {
-      "status": "needs-user-input",
-      "value": null,
-      "approval": null
+      "status": "approved",
+      "value": "Local stdio process distributed through public npm; GitHub-hosted CI and main-only OIDC publication. No hosted MCP service.",
+      "approval": "Human requested separate repository, npm automation, screenshots and Dynatrace/MCP observability in this chat; existing package stack/licence retained."
     },
     "privacy": {
-      "status": "needs-user-input",
-      "value": null,
-      "approval": null
+      "status": "approved",
+      "value": "Read-only scopes and current API policy; opt-in OTLP exports safe metadata only. No arguments/results, contacts, tokens or raw URLs in telemetry.",
+      "approval": "Human requested separate repository, npm automation, screenshots and Dynatrace/MCP observability in this chat; existing package stack/licence retained."
     },
     "observability": {
-      "status": "needs-user-input",
-      "value": null,
-      "approval": null
+      "status": "approved",
+      "value": "Dynatrace India CS existing SalesDrone tenant; runtime traces/logs/metrics plus metadata-only GitHub SDLC observer as requested.",
+      "approval": "Human requested separate repository, npm automation, screenshots and Dynatrace/MCP observability in this chat; existing package stack/licence retained."
     },
     "license": {
-      "status": "needs-user-input",
-      "value": null,
-      "approval": null
+      "status": "approved",
+      "value": "Retain existing published SalesDrone MCP MIT licence; preserve inherited template and third-party notices.",
+      "approval": "Human requested separate repository, npm automation, screenshots and Dynatrace/MCP observability in this chat; existing package stack/licence retained."
     }
   }
 }

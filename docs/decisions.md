@@ -1,16 +1,3 @@
-# Decisions and unresolved questions
+# Decisions
 
-For each consequential decision record: question; proposed options/tradeoff; status (proposed/approved/needs-user-input); chosen value; approval source; consequences.
-
-Decision areas: product rules, stack/runtime versions, deployment/cloud/project/region, auth/roles/tenancy, storage/jobs/integrations, design/brand, repository owner/visibility/main, Dynatrace tenant/RUM consent/identity, costs/retention, release/merge permissions.
-
-None are pre-approved by this template. Ask the user directly when the answer is missing. Never paste secret values here.
-
-## Template maintenance decisions — not consumer defaults
-
-| Question | Decision/status | Alternatives and reason | Approval source | Consequence |
-| --- | --- | --- | --- | --- |
-| Template license | MIT / approved | Apache-2.0 considered; owner explicitly selected MIT | Human answer in this chat, 2026-10-29; issue #14 | Root LICENSE covers inherited template material; each generated application's license stays needs-user-input |
-| Template version | 1.9.0 / approved | Replace custom 1.09.0 with valid SemVer for interoperable tooling | Issue #18 and human authorization to resolve all issues | No leading-zero numeric identifiers; tag v1.9.0 matches metadata |
-| Partial bootstrap | Remove / approved implementation choice | Synchronizing partial assets still leaves missing catalog/tool references; full GitHub template is the default | Issue #17 alternative and human authorization to resolve all issues | No bundled asset duplicates; unavailable GitHub means adoption pending |
-| Main protection | PR + foundation check; no force-push/deletion / approved | Sole-owner workflow uses zero mandatory approvals; actual checks remain required | Issue #13 and human authorization to resolve all issues | Apply opt-in settings procedure; no bypass actors |
+The human requested independent public GitHub ownership, npm publication, README/screenshots and runtime/SDLC Dynatrace observability. Retain the already published package's name, MIT licence, Node/ESM/stdio stack and read-only API boundary. Use main-only GitHub OIDC publication after checks. Retain the existing SalesDrone Dynatrace tenant; client runtime telemetry is opt-in and configurable. Use the user's lean instrumentation core plus explicit SDK-v2 callback bridge; avoid its broad auto-register entry point and vulnerable dependency bundle. No customer content enters telemetry or captures. See project.json for approval provenance.

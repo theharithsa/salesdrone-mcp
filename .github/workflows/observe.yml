@@ -1,0 +1,56 @@
+name: Observe lifecycle
+on:
+  workflow_run:
+    workflows: [CI and npm publication, Foundation checks]
+    types: [completed]
+  issues:
+    types: [opened, edited, closed, reopened]
+  pull_request_target:
+    types: [opened, edited, closed, reopened, synchronize]
+  pull_request_review:
+    types: [submitted, dismissed]
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      issues:
+        description: Comma-separated issue numbers to reconcile
+        type: string
+      prs:
+        description: Comma-separated PR numbers to reconcile
+        type: string
+      run:
+        description: Workflow run ID to reconcile
+        type: string
+permissions:
+  contents: read
+  actions: read
+  issues: read
+  pull-requests: read
+jobs:
+  observe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      # Metadata only: always use trusted main, never PR head or artifact code.
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          ref: refs/heads/main
+          persist-credentials: false
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: "22"
+          cache: npm
+      - run: npm ci --ignore-scripts && npm run build
+      - run: node scripts/lifecycle.mjs
+        env:
+          GH_TOKEN: ${{ github.token }}
+          DYNATRACE_TENANT_URL: ${{ vars.DYNATRACE_TENANT_URL }}
+          DYNATRACE_API_TOKEN: ${{ secrets.DYNATRACE_API_TOKEN }}
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        if: always()
+        with:
+          name: lifecycle-receipt
+          path: observation.json
+          if-no-files-found: ignore
+          retention-days: 30

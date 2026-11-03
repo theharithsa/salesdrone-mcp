@@ -26,7 +26,7 @@ class FoundationTests(unittest.TestCase):
             output = root / name
             output.parent.mkdir(parents=True, exist_ok=True)
             shutil.copyfile(ROOT / name, output)
-        for name in ('scripts', 'skills', '.agents', 'schemas', 'docs'):
+        for name in ('scripts', 'skills', '.agents', 'schemas', 'docs', 'src', '.github'):
             shutil.copytree(ROOT / name, root / name, dirs_exist_ok=True,
                             ignore=shutil.ignore_patterns('__pycache__'))
         return root
@@ -34,7 +34,7 @@ class FoundationTests(unittest.TestCase):
     def test_discovery_gate_requires_decisions_and_provenance(self):
         root = self.fixture()
         self.assertEqual(foundation.validate(root), [])
-        self.assertTrue(foundation.validate(root, ready=True))
+        self.assertEqual(foundation.validate(root, ready=True), [])
         project = json.loads((root / 'project.json').read_text())
         project['name'] = 'Synthetic app'
         project['template']['revision'] = 'a' * 40
@@ -95,7 +95,7 @@ class FoundationTests(unittest.TestCase):
         self.assertEqual(payload, {'ok': True, 'errors': [], 'ready': False})
         result = subprocess.run(command+['--ready'], capture_output=True, text=True)
         payload = json.loads(result.stdout)
-        self.assertNotEqual(result.returncode, 0)
-        self.assertFalse(payload['ok'])
+        self.assertEqual(result.returncode, 0)
+        self.assertTrue(payload['ok'])
         self.assertTrue(payload['ready'])
         self.assertEqual(payload['errors'], sorted(set(payload['errors'])))
