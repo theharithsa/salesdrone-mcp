@@ -30,15 +30,19 @@
     "Synthetic browser screenshots do not certify physical-device/native Safari behavior."
   ],
   "lifecycle": {
-    "issueUrl": "https://github.com/theharithsa/salesdrone-mcp/issues/1",
-    "pullRequestUrl": "https://github.com/theharithsa/salesdrone-mcp/pull/2",
+    "issueUrl": "https://github.com/theharithsa/salesdrone-mcp/issues/3",
+    "pullRequestUrl": "https://github.com/theharithsa/salesdrone-mcp/pull/4",
     "checkedHeadSha": "609c8d81a58efca9ef66815c7f620680af3a8619",
     "mergeSha": "23fca01ab5eec1daa072b88b370b335eb28b3def",
     "issueResolution": "completed",
     "deploymentId": "npm @theharithsa/salesdrone-mcp@1.1.0",
     "artifactDigest": "sha512-x/chkURda0F13xARtcjd+Pm1sXFGAfiqBuOhj821cj9mam2ac3y8GjIl+oBq8LX8Rha/fv+m41g+j0Jg1URkyg==",
     "sdlcEvidence": [
-      "docs/releases/1.1.0.json"
+      {
+        "artifact": "docs/releases/1.1.0.json",
+        "status": "tenant-verified",
+        "sourceRun": 41703700082
+      }
     ]
   }
 }
