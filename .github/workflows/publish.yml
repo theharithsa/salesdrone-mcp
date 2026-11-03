@@ -15,12 +15,14 @@ jobs:
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          fetch-depth: 0
       - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
         with:
           node-version: "22"
           cache: npm
       - run: npm ci --ignore-scripts
-      - run: npm run build && npm run check && npm run security:scan
+      - run: npm run build && npm run check && node scripts/check-release-policy.mjs && npm run security:scan
       - run: npm audit --audit-level=moderate
       - run: node --test --test-timeout=20000 --test-reporter=./scripts/test-reporter.mjs --test-reporter-destination=cases.ndjson test/*.test.js
       - run: sh scripts/check.sh && python3 scripts/check_foundation.py --ready
@@ -42,6 +44,8 @@ jobs:
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          fetch-depth: 0
       - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
         with:
           node-version: "22"
@@ -53,7 +57,9 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        if: always()
         with:
           name: npm-publication-receipt
           path: publication.json
+          if-no-files-found: ignore
           retention-days: 30

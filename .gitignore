@@ -19,3 +19,5 @@ dist/
 cases.ndjson
 publication.json
 .demo/
+
+observation.json

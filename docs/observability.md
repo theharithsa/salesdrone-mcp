@@ -29,3 +29,5 @@ fetch bizevents, from:now()-1d
 | filter event.provider == "avinyatech.salesdrone.mcp.sdlc"
 | summarize count(), by:{event.type}
 ```
+
+CloudEvents use source=avinyatech.salesdrone.mcp.sdlc and allowlisted fields inside data. Dynatrace derives provider from source; initial1.1.0 events used https://github.com/theharithsa/salesdrone-mcp. Both sets retain actual source timestamps and stable IDs. Do not silently relabel historical events.

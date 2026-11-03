@@ -11,3 +11,5 @@ PR verification receives no secrets. Observer checks trusted main only; never ex
 Run npm test, check/security/audit and foundation checks. test/lifecycle.test.js covers projection, retry identity, actual status normalization and untrusted archives. Reconcile missed issue/PR/run metadata via dispatch, then query tenant separately from acceptance receipts. Update continuation with remaining gates; preserve previous immutable release evidence.
 
 Completed-run reconciliation also reads merged PR links/issues and matching GitHub releases, because GITHUB_TOKEN-created transitions may not dispatch sibling workflows. Zip data is decompressed through a bounded stream.
+
+Issue3 strengthens publication processing/reconciliation: preserve submitted tarball identity, allow only unchanged packaged-source descendants, poll bounded registry visibility and archive pending receipts. PR release-policy check requires version bumps for src/README/LICENSE/package.json changes. Use conventional CloudEvent data plus canonical source/provider.
