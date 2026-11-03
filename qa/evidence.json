@@ -1,17 +1,38 @@
 {
   "$schema": "../schemas/evidence.schema.json",
   "schemaVersion": 1,
-  "application": "New application (needs-user-input)",
-  "revision": null,
-  "release": null,
-  "checks": [],
+  "application": "SalesDrone MCP",
+  "revision": "06021fa9afdacdad1b67dce64695629f18d3dfb0",
+  "release": "1.1.0",
+  "checks": [
+    {
+      "id": "node-protocol-otlp-lifecycle-12-cases",
+      "status": "passed",
+      "revision": "06021fa9afdacdad1b67dce64695629f18d3dfb0",
+      "command": "node --test --test-timeout=20000 --test-reporter=./scripts/test-reporter.mjs --test-reporter-destination=cases.ndjson test/*.test.js",
+      "observedAt": "2026-11-03T19:18:06Z",
+      "environment": "GitHub Actions Node22 / synthetic fixtures",
+      "artifact": "https://github.com/theharithsa/salesdrone-mcp/actions/runs/41701887760"
+    },
+    {
+      "id": "foundation-21-cases",
+      "status": "passed",
+      "revision": "06021fa9afdacdad1b67dce64695629f18d3dfb0",
+      "command": "sh scripts/check.sh",
+      "observedAt": "2026-11-03T19:17:58Z",
+      "environment": "GitHub Actions Python3.12 / synthetic temporary repositories",
+      "artifact": "https://github.com/theharithsa/salesdrone-mcp/actions/runs/41701887457"
+    }
+  ],
   "limits": [
-    "No checks have been executed by this template."
+    "Checks apply to their recorded revision; current-head CI is required separately.",
+    "Publication and tenant search verification are post-merge gates.",
+    "Screenshots use synthetic local protocol results; no physical-device/native Safari certification."
   ],
   "lifecycle": {
-    "issueUrl": null,
-    "pullRequestUrl": null,
-    "checkedHeadSha": null,
+    "issueUrl": "https://github.com/theharithsa/salesdrone-mcp/issues/1",
+    "pullRequestUrl": "https://github.com/theharithsa/salesdrone-mcp/pull/2",
+    "checkedHeadSha": "06021fa9afdacdad1b67dce64695629f18d3dfb0",
     "mergeSha": null,
     "issueResolution": null,
     "deploymentId": null,
