@@ -3,6 +3,8 @@ import { createHash } from "node:crypto";
 import { pathToFileURL } from "node:url";
 import JSZip from "jszip";
 import { startTelemetry } from "../src/telemetry.js";
+import { readSource, safeFailureCode } from "./source-http.mjs";
+let phase = "configuration";
 const hash = (v) => createHash("sha256").update(String(v)).digest("hex");
 const states = new Set([
   "open",
@@ -149,23 +151,20 @@ async function main() {
     tenant.hash
   )
     throw Error("Unexpected tenant");
-  const gh = async (path, binary = false) => {
-    const r = await fetch("https://api.github.com/repos/" + repo + path, {
-      headers: {
-        Authorization: "Bearer " + env.GH_TOKEN,
-        Accept: "application/vnd.github+json",
-        "X-GitHub-Api-Version": "2022-11-28",
+  phase = "source-metadata";
+  const gh = (path, binary = false) =>
+    readSource(
+      "https://api.github.com/repos/" + repo + path,
+      {
+        headers: {
+          Authorization: "Bearer " + env.GH_TOKEN,
+          Accept: "application/vnd.github+json",
+          "X-GitHub-Api-Version": "2022-11-28",
+        },
       },
-      signal: AbortSignal.timeout(15000),
-    });
-    if (!r.ok) throw Error("GitHub metadata unavailable: " + r.status);
-    if (binary) {
-      const b = Buffer.from(await r.arrayBuffer());
-      if (b.length > 2 * 1024 * 1024) throw Error("Oversized artifact");
-      return b;
-    }
-    return r.json();
-  };
+      { binary, retry404: binary },
+    );
+
   const payload = JSON.parse(await readFile(env.GITHUB_EVENT_PATH, "utf8")),
     events = [];
   const add = (...args) => events.push(eventRecord(...args));
@@ -179,20 +178,24 @@ async function main() {
   };
   const pr = async (n) => {
     const p = await gh("/pulls/" + n);
-    const links = await fetch("https://api.github.com/graphql", {
-      method: "POST",
-      headers: {
-        Authorization: "Bearer " + env.GH_TOKEN,
-        "Content-Type": "application/json",
+    const links = await readSource(
+      "https://api.github.com/graphql",
+      {
+        method: "POST",
+        headers: {
+          Authorization: "Bearer " + env.GH_TOKEN,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          query:
+            'query { repository(owner:"theharithsa",name:"salesdrone-mcp") { pullRequest(number:' +
+            Number(n) +
+            ") { closingIssuesReferences(first:100) { nodes { number } } } } }",
+        }),
+        signal: AbortSignal.timeout(15000),
       },
-      body: JSON.stringify({
-        query:
-          'query { repository(owner:"theharithsa",name:"salesdrone-mcp") { pullRequest(number:' +
-          Number(n) +
-          ") { closingIssuesReferences(first:100) { nodes { number } } } } }",
-      }),
-      signal: AbortSignal.timeout(15000),
-    }).then((r) => r.json());
+      { graphql: true },
+    );
     if (links.errors) throw Error("PR issue links unavailable");
     const metadata = {
       number: p.number,
@@ -355,6 +358,7 @@ async function main() {
       await run(payload.inputs.run);
     }
   }
+  phase = "ingestion";
   const telemetry = await startTelemetry(
     {
       ...env,
@@ -416,9 +420,43 @@ async function main() {
   );
 }
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href)
-  main().catch(() => {
+  main().catch(async (error) => {
+    const code = safeFailureCode(error);
+    let receipt = {};
+    try {
+      const prior = JSON.parse(await readFile("observation.json", "utf8"));
+      if (prior.reportingRun === process.env.GITHUB_RUN_ID) receipt = prior;
+    } catch {}
+    await writeFile(
+      "observation.json",
+      JSON.stringify({
+        ...receipt,
+        source: "theharithsa/salesdrone-mcp",
+        event: [
+          "workflow_run",
+          "pull_request_target",
+          "issues",
+          "pull_request_review",
+          "release",
+          "workflow_dispatch",
+        ].includes(process.env.GITHUB_EVENT_NAME)
+          ? process.env.GITHUB_EVENT_NAME
+          : "unknown",
+        reportingRun: /^\d+$/.test(process.env.GITHUB_RUN_ID || "")
+          ? process.env.GITHUB_RUN_ID
+          : null,
+        status: "failed",
+        phase,
+        errorCode: code,
+        tenantSearchVerified: false,
+      }),
+    ).catch(() => {});
     console.error(
-      "Lifecycle reporting failed; inspect sanitized receipt and configuration.",
+      "Lifecycle reporting failed: " +
+        code +
+        " (" +
+        phase +
+        "). Inspect the sanitized receipt.",
     );
     process.exitCode = 1;
   });

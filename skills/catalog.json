@@ -173,7 +173,8 @@
       "id": "sdlc-observer",
       "skillId": "service-sdlc-observer",
       "sourcePaths": [
-        "scripts/lifecycle.mjs"
+        "scripts/lifecycle.mjs",
+        "scripts/source-http.mjs"
       ],
       "entrypoints": [
         "scripts/lifecycle.mjs",
