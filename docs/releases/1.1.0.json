@@ -1,0 +1,95 @@
+{
+  "schemaVersion": 1,
+  "package": "@theharithsa/salesdrone-mcp",
+  "version": "1.1.0",
+  "publication": {
+    "name": "@theharithsa/salesdrone-mcp",
+    "version": "1.1.0",
+    "reportingRevision": "23fca01ab5eec1daa072b88b370b335eb28b3def",
+    "runId": "41703700082",
+    "status": "verified",
+    "publicationRevision": "1c5641f9e3c98b480af1ba018dc5c95d0f0db0d3",
+    "integrity": "sha512-x/chkURda0F13xARtcjd+Pm1sXFGAfiqBuOhj821cj9mam2ac3y8GjIl+oBq8LX8Rha/fv+m41g+j0Jg1URkyg==",
+    "tarball": "https://registry.npmjs.org/@theharithsa/salesdrone-mcp/-/salesdrone-mcp-1.1.0.tgz",
+    "attestations": "https://registry.npmjs.org/-/npm/v1/attestations/@theharithsa%2fsalesdrone-mcp@1.1.0"
+  },
+  "githubRelease": "https://github.com/theharithsa/salesdrone-mcp/releases/tag/v1.1.0",
+  "ci": {
+    "sourceRevision": "23fca01ab5eec1daa072b88b370b335eb28b3def",
+    "run": "https://github.com/theharithsa/salesdrone-mcp/actions/runs/41703700082",
+    "nodeCases": 13,
+    "allPassed": true,
+    "foundationCases": 21,
+    "foundationRun": "https://github.com/theharithsa/salesdrone-mcp/actions/runs/41703700135",
+    "registryInstalledProtocolSuiteCases": 6,
+    "registryInstalledProtocolScope": "Real stdio discovery/all21 reads, argument rejection and sparse/error cases use installed CLI; additional client/package guards run from test source."
+  },
+  "runtime": {
+    "package": "1.1.0",
+    "commit": "1c5641f9e3c98b480af1ba018dc5c95d0f0db0d3",
+    "environment": "test; actual installed stdio package with isolated synthetic API; real Dynatrace OTLP forwarding",
+    "receipts": [
+      {
+        "signal": "/v1/logs",
+        "status": 200,
+        "rejected": 0,
+        "bytes": 1140
+      },
+      {
+        "signal": "/v1/traces",
+        "status": 200,
+        "rejected": 0,
+        "bytes": 1202
+      },
+      {
+        "signal": "/v1/metrics",
+        "status": 200,
+        "rejected": 0,
+        "bytes": 2747
+      }
+    ],
+    "traceIds": [
+      "c46aa5c85a46b702de62bc80b2f7926d",
+      "44cfbb7c21e0735dfccce53308481daa"
+    ],
+    "stderrEmpty": true,
+    "tenantSearchVerified": true,
+    "tenantCounts": {
+      "toolSpans": 2,
+      "httpChildSpans": 2,
+      "correlatedLogs": 4,
+      "toolCallMetric": 2
+    }
+  },
+  "lifecycle": {
+    "provider": "avinyatech.salesdrone.mcp.sdlc",
+    "authority": "GitHub source API metadata and actual Node runner artifacts",
+    "verifiedCurrentRun": 41703700082,
+    "workflowSuccess": 1,
+    "jobSuccess": 2,
+    "stepSuccess": 22,
+    "passedTestRecords": 13,
+    "caseRecordsReconciledWithArtifact": true,
+    "releaseEventVerified": true,
+    "reconciliationRun": "https://github.com/theharithsa/salesdrone-mcp/actions/runs/41703988378",
+    "historicalProvider": "https://github.com/theharithsa/salesdrone-mcp",
+    "limits": "Stable IDs support consumer deduplication; no exactly-once ingest claim. No fabricated development/review events."
+  },
+  "website": {
+    "version": "2.9.1",
+    "apiContract": "1.29.0",
+    "commit": "adb5e32ce4cb2c39c4144e763c4637a775a67183",
+    "run": "https://github.com/theharithsa/SalesDrone/actions/runs/41701953523",
+    "allJobsSucceeded": true,
+    "automatedCases": 384,
+    "tenantTestRecordsReconciled": 384,
+    "unauthenticatedLeadsStatus": 401,
+    "ownership": "MCP source/workspace removed; README badge links here; original dirty .agents preserved."
+  },
+  "limits": [
+    "Runtime check used fictional loopback API fixtures with the real installed stdio package and actual Dynatrace forwarding; no production customer reads or writes.",
+    "Browser screenshots certify local documented renders only, not physical-device or native Safari behavior.",
+    "Original publication run41702632848 failed its visibility poll after accepted submission, then normal failed-job reconciliation succeeded once npm processing finished; tarball was not overwritten.",
+    "Current operational revision differs from immutable npm publication revision by non-packaged paths only."
+  ]
+}
