@@ -90,7 +90,21 @@ export async function parseCases(zipBytes) {
     files[0]._data?.uncompressedSize > 2 * 1024 * 1024
   )
     throw Error("Invalid case archive");
-  const text = await files[0].async("string");
+  const text = await new Promise((resolve, reject) => {
+    const chunks = [];
+    let size = 0;
+    const stream = files[0].internalStream("nodebuffer");
+    stream.on("data", (chunk) => {
+      size += chunk.length;
+      if (size > 2 * 1024 * 1024) {
+        stream.pause();
+        reject(Error("Oversized case data"));
+      } else chunks.push(chunk);
+    });
+    stream.on("error", reject);
+    stream.on("end", () => resolve(Buffer.concat(chunks).toString("utf8")));
+    stream.resume();
+  });
   if (text.length > 2 * 1024 * 1024) throw Error("Oversized case data");
   const lines = text.trim().split("\n");
   if (lines.length > 2000) throw Error("Too many cases");
@@ -189,6 +203,7 @@ async function main() {
           (n) => n.number,
         ),
     };
+    for (const number of metadata.linkedIssues) await issue(number);
     add("pr", p.id, "created", p.created_at, metadata);
     add(
       "pr",
@@ -254,6 +269,23 @@ async function main() {
             },
           );
     }
+    // GITHUB_TOKEN-created releases/merges do not necessarily trigger sibling
+    // workflows. Reconcile their source records from the completed run instead.
+    const associated = await gh(
+      "/commits/" + r.head_sha + "/pulls?per_page=100",
+    );
+    if (associated.length === 100)
+      throw Error("Associated PR listing truncated");
+    for (const p of associated.filter((p) => p.merged_at)) await pr(p.number);
+    const releases = await gh("/releases?per_page=100");
+    for (const release of releases.filter(
+      (x) => !x.draft && x.target_commitish === r.head_sha,
+    ))
+      add("release", release.id, "created", release.published_at, {
+        version: release.tag_name,
+        url: release.html_url,
+        revision: r.head_sha,
+      });
     const artifacts = await gh(
       "/actions/runs/" + r.id + "/artifacts?per_page=100",
     );

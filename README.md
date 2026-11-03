@@ -76,7 +76,7 @@ Pages are bounded (maximum 100), with four concurrent HTTP requests, a 15-second
 
 ## OpenTelemetry and Dynatrace
 
-Runtime telemetry is **opt-in** and uses [your MCP instrumentation package](https://github.com/theharithsa/opentelemetry-instrumentation-mcp), pinned to its lean `0.0.2` class. That class is identical to the class in `1.0.4`; the latter also pulls broad auto-instrumentation dependencies with known vulnerabilities. The explicit SDK-v2 bridge reuses its tracer/provider with legacy patching disabled. We do not load its `/register` entry point or capture tool inputs/results.
+Runtime telemetry is **opt-in** and uses [@theharithsa/opentelemetry-instrumentation-mcp](https://github.com/theharithsa/opentelemetry-instrumentation-mcp), pinned to its lean `0.0.2` class. That class is identical to the class in `1.0.4`; the latter also pulls broad auto-instrumentation dependencies with known vulnerabilities. The explicit SDK-v2 bridge reuses its tracer/provider with legacy patching disabled. We do not load its `/register` entry point or capture tool inputs/results.
 
 ```text
 SALESDRONE_OTEL_ENABLED=true
