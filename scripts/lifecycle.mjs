@@ -63,20 +63,22 @@ export function eventRecord(kind, id, status, time, metadata = {}) {
     id: hash(
       `${process.env.GITHUB_REPOSITORY}:${kind}:${id}:${status}:${time}`,
     ),
-    source: `https://github.com/${process.env.GITHUB_REPOSITORY}`,
+    source: "avinyatech.salesdrone.mcp.sdlc",
     type: `sdlc.${kind}.${status}`,
     time,
-    "event.provider": "avinyatech.salesdrone.mcp.sdlc",
-    "event.type": `sdlc.${kind}.${status}`,
-    "event.id": hash(
-      `${process.env.GITHUB_REPOSITORY}:${kind}:${id}:${status}:${time}`,
-    ),
-    timestamp: Date.parse(time),
-    "sdlc.authority": kind === "test" ? "node:test" : "github",
-    "sdlc.kind": kind,
-    "sdlc.status": status,
-    repository: process.env.GITHUB_REPOSITORY,
-    ...safe,
+    data: {
+      "event.provider": "avinyatech.salesdrone.mcp.sdlc",
+      "event.type": `sdlc.${kind}.${status}`,
+      "event.id": hash(
+        `${process.env.GITHUB_REPOSITORY}:${kind}:${id}:${status}:${time}`,
+      ),
+      timestamp: Date.parse(time),
+      "sdlc.authority": kind === "test" ? "node:test" : "github",
+      "sdlc.kind": kind,
+      "sdlc.status": status,
+      repository: process.env.GITHUB_REPOSITORY,
+      ...safe,
+    },
   };
 }
 export async function parseCases(zipBytes) {

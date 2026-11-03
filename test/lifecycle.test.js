@@ -18,8 +18,10 @@ test("source projection excludes free text and creates retry-stable lifecycle id
   ];
   const a = eventRecord(...args);
   assert.deepEqual(a, eventRecord(...args));
+  assert.equal(a.source, "avinyatech.salesdrone.mcp.sdlc");
+  assert.equal(a.data["event.provider"], a.source);
   assert.ok(!JSON.stringify(a).includes("secret"));
-  assert.equal(a["sdlc.authority"], "github");
+  assert.equal(a.data["sdlc.authority"], "github");
   assert.throws(() => eventRecord("issue", 12, "invented", "bad"));
 });
 test("runner reporter preserves real passed, failed and skipped outcomes without names/errors", () => {
@@ -64,10 +66,53 @@ test("artifact parser rejects traversal, duplicate IDs, oversized and invalid re
   );
   const traversal = new JSZip();
   traversal.file("../cases.ndjson", JSON.stringify(r));
-  await assert.rejects(() => traversal.generateAsync({type:"nodebuffer"}).then(parseCases));
+  await assert.rejects(() =>
+    traversal.generateAsync({ type: "nodebuffer" }).then(parseCases),
+  );
   const bad = new JSZip();
   bad.file("cases.ndjson", [r, r].map(JSON.stringify).join("\n"));
   await assert.rejects(() =>
     bad.generateAsync({ type: "nodebuffer" }).then(parseCases),
   );
+});
+
+test("publication reconciliation permits only exact or unchanged ancestor package source", async () => {
+  const { validatePublication } = await import("../scripts/publish.mjs");
+  const data = {
+    name: "@theharithsa/salesdrone-mcp",
+    version: "1.1.0",
+    gitHead: "a".repeat(40),
+    dist: { integrity: "sha512-public-digest" },
+  };
+  const options = {
+    name: data.name,
+    version: data.version,
+    revision: "a".repeat(40),
+  };
+  validatePublication(data, options, () => {
+    throw Error("Exact identity needs no ancestry lookup");
+  });
+  options.revision = "b".repeat(40);
+  const commands = [];
+  validatePublication(data, options, (args) => {
+    commands.push(args);
+    return "";
+  });
+  assert.equal(commands[0][0], "merge-base");
+  assert.ok(commands[1].includes("src"));
+  assert.throws(
+    () =>
+      validatePublication(data, options, (args) =>
+        args[0] === "diff" ? "src/server.js" : "",
+      ),
+    /immutable version/,
+  );
+  assert.throws(
+    () =>
+      validatePublication(data, options, () => {
+        throw Error("unrelated commit");
+      }),
+    /unrelated/,
+  );
+  assert.throws(() => validatePublication({ ...data, name: "wrong" }, options));
 });
