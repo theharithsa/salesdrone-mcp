@@ -1,7 +1,3 @@
-# Feature and signal coverage
+# Coverage
 
-Per feature record acceptance criteria; contract/permissions; data concurrency/migration; UI states/settings; logs/spans/metrics; committed events or reason inapplicable; actual automated suite and manual case IDs; docs/skill owner; completion status.
-
-Per signal record service/resource identity, schema/name/unit, allowlisted fields, bounded dimensions, secret reference, retention, recovery and expected verification. CI/test/release events are automation observations; business outcomes require committed authority.
-
-Planned coverage is not evidence. Record execution separately in qa/evidence.json.
+Protocol: 21 tools exercised over real stdio, restrictions/schema/page bounds, sparse cursor, errors, HTTPS/redirect/body/deadline constraints. Runtime: independent protobuf receiver verifies traces, logs, metrics, concurrent parentage, propagation, privacy and failed collector behavior. SDLC: source projection, pass/fail/skip reporter and bounded archive parsing. Package: strict public-file manifest. Foundation: catalog/link/schema/tooling checks. Synthetic browser captures review the docs harness only. Live publication and tenant queries are separate post-release gates; no physical-device/Safari/customer-write certification.

@@ -92,6 +92,30 @@
         "app-launchpad",
         "ian-xiaohei-illustrations"
       ]
+    },
+    {
+      "id": "service-mcp-server",
+      "kind": "service",
+      "path": "skills/service-mcp-server/SKILL.md",
+      "description": "Maintain the mcp-server service; read its implementation and continuation context.",
+      "dependsOn": [
+        "project-implementation",
+        "project-testing",
+        "project-deployment",
+        "project-observability"
+      ]
+    },
+    {
+      "id": "service-sdlc-observer",
+      "kind": "service",
+      "path": "skills/service-sdlc-observer/SKILL.md",
+      "description": "Maintain the sdlc-observer service; read its implementation and continuation context.",
+      "dependsOn": [
+        "project-implementation",
+        "project-testing",
+        "project-deployment",
+        "project-observability"
+      ]
     }
   ],
   "services": [
@@ -119,6 +143,54 @@
       ],
       "continuation": "skills/service-foundation-tooling/continuation.md",
       "lastReviewedRevision": "953717c787dd37d1500c04767f818f4e0a0faffd"
+    },
+    {
+      "id": "mcp-server",
+      "skillId": "service-mcp-server",
+      "sourcePaths": [
+        "src"
+      ],
+      "entrypoints": [
+        "src/cli.js",
+        "src/server.js"
+      ],
+      "owner": "theharithsa",
+      "status": "active",
+      "dependsOn": [],
+      "contracts": [
+        "docs/observability.md",
+        "README.md"
+      ],
+      "testCommands": [
+        "npm test",
+        "npm run check",
+        "npm run security:scan"
+      ],
+      "continuation": "skills/service-mcp-server/continuation.md",
+      "lastReviewedRevision": "5f849b3bdb31696b2bcb800b2df7c5ce5fdaaf9d"
+    },
+    {
+      "id": "sdlc-observer",
+      "skillId": "service-sdlc-observer",
+      "sourcePaths": [
+        "scripts/lifecycle.mjs"
+      ],
+      "entrypoints": [
+        "scripts/lifecycle.mjs",
+        ".github/workflows/observe.yml"
+      ],
+      "owner": "theharithsa",
+      "status": "active",
+      "dependsOn": [],
+      "contracts": [
+        "docs/delivery.md",
+        "docs/observability.md"
+      ],
+      "testCommands": [
+        "node --test test/lifecycle.test.js"
+      ],
+      "continuation": "skills/service-sdlc-observer/continuation.md",
+      "lastReviewedRevision": "5f849b3bdb31696b2bcb800b2df7c5ce5fdaaf9d"
     }
   ]
 }

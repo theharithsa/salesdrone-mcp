@@ -1,15 +1,5 @@
-# Foundation checks
+# Testing
 
-Python 3.11+ and a POSIX shell; standard library only:
+Run npm test, npm run check, npm run security:scan, npm audit --audit-level=moderate, sh scripts/check.sh and python3 scripts/check_foundation.py --ready. Node 22.18+ required. No real credential is required. npm run build embeds package version and GITHUB_SHA or current HEAD. CI reporter is scripts/test-reporter.mjs; cases.ndjson contains only hashed identity, status, duration, actual timestamp and originating attempt. It preserves failures/skips; no free-text failure output is exported.
 
-```sh
-sh scripts/check.sh
-python3 scripts/check_foundation.py --json
-python3 scripts/check_foundation.py --ready --json
-```
-
-The shared entrypoint runs metadata/version/skill validation, local Markdown links and unit tests. README, catalog and CI use that same entrypoint. JSON output has `ok`, deterministic `errors`, and `ready` (whether discovery checks were requested); failures exit nonzero in either mode.
-
-The [schemas](../schemas/README.md) own field shapes. The Python gate adds internal-path/reference/dependency checks and ready/active semantics. Tests cover multi-error diagnostics, malformed structures, schema/constant parity, SemVer, service generation and rollback, link failures, CI command agreement and ruleset dry-run behavior.
-
-For actual application suites follow the [test contract](../.agents/skills/app-launchpad/references/testing.md) and [evidence rules](../.agents/skills/app-launchpad/references/evidence.md). Record real commands/prerequisites in the relevant service skill after stack selection. `examples/` is synthetic reference material and never execution proof or a cataloged service. Raw local artifacts remain ignored under `qa/local/` or `qa/raw/`.
+npm run demo uses isolated synthetic API fixtures and the real stdio client/server on loopback; public captures are manually reviewed with the approved browser. Screenshot manifest records actual measured viewport and image dimensions. Do not claim physical devices or Safari from that render. Website API authorization/emulator tests remain in the SalesDrone repository.

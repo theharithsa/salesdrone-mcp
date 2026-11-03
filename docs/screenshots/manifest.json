@@ -1,0 +1,36 @@
+{
+  "packageVersion": "1.1.0",
+  "capturedOn": "2026-11-04",
+  "source": "npm run demo: actual local stdio discovery/result with fictional API fixtures",
+  "captures": [
+    {
+      "file": "docs/screenshots/protocol-desktop.jpg",
+      "sha256": "52975cf391a05c3e70bcd9cf93d7e459c47e8fd48403b5fc5476ec41cc78f684",
+      "pixelWidth": 2611,
+      "pixelHeight": 1469,
+      "measuredViewport": {
+        "width": 1828,
+        "height": 1028
+      },
+      "requestedNarrowWidth": null,
+      "captureMode": "full-page JPEG; approved in-app browser; browser scaling may differ from requested viewport",
+      "synthetic": true,
+      "reviewed": true,
+      "certification": "Local docs harness only; no physical-device or native Safari certification"
+    },
+    {
+      "file": "docs/screenshots/protocol-narrow.jpg",
+      "sha256": "0da6e1edfc289cc3ec3eadcc80072c3735f77925496a3496b3fe39f7ea7149bc",
+      "pixelWidth": 764,
+      "pixelHeight": 2221,
+      "measuredViewport": {
+        "width": 557
+      },
+      "requestedNarrowWidth": 390,
+      "captureMode": "full-page JPEG; approved in-app browser; browser scaling may differ from requested viewport",
+      "synthetic": true,
+      "reviewed": true,
+      "certification": "Local docs harness only; no physical-device or native Safari certification"
+    }
+  ]
+}

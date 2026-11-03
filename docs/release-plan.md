@@ -1,9 +1,5 @@
-# Release impact and verification plan
+# Release impact: 1.1.0
 
-Status: pending decisions and implementation. This is not deployment authorization.
+Milestone 1, issue 1. Compatible feature release and repository extraction. Runtime source, telemetry config, dependency graph, publication, lifecycle reporting, tests, README and screenshots change. API contract 1.29.0, database/schema/indexes, customer data and SalesDrone membership policy are unchanged. No business write event exists for read-only tools; operational tool/HTTP spans/logs/metrics and GitHub events cover behavior.
 
-Record issue URL/acceptance criteria, verified issue-to-PR relationship and resolution state, version, source revision, PR/checked head/merge SHA, workflow/run/attempt, target environment and authorized scope. List affected UI, modules/contracts/policies, settings, data/indexes/migrations, secret bindings, telemetry, docs/screenshots and rollback consequences. Define executable predeploy gates and separate postdeploy checks for the chosen stack.
-
-Postdeploy evidence must include exact version/SHA/service revisions; public/protected-route checks; independent docs checks; per-signal transport and partial rejection counts; tenant queries for events/logs/traces/actual metric samples; actual native RUM linkage status; failures/limits. No customer writes without explicit authorization. Never label these pending checks passed.
-
-Track SDLC events from intake/development through review/checks/merge, release/deployment, runtime verification and rollback. Document source authority, stable IDs, safe fields, delivery/recovery, and source-to-tenant proof separately from application signal evidence.
+Prepublication gates: protocol, OTLP/privacy/export rejection, metadata/syntax, package allowlist, security scan, dependency audit, foundation/catalog/link checks, synthetic screenshot review, checked linked PR and trusted publisher setup. Postpublication: npm gitHead/integrity/provenance, GitHub release/tag, installed package protocol smoke, source-owned lifecycle receipts and separate Dynatrace runtime/SDLC tenant queries. Keep pending verification open. Rollback through a new patch, never replace 1.0.0/1.1.0. Existing client tokens gain no scopes automatically.
