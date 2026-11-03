@@ -86,6 +86,7 @@ export async function parseCases(zipBytes) {
   if (
     files.length !== 1 ||
     files[0].name !== "cases.ndjson" ||
+    files[0].unsafeOriginalName !== "cases.ndjson" ||
     files[0]._data?.uncompressedSize > 2 * 1024 * 1024
   )
     throw Error("Invalid case archive");

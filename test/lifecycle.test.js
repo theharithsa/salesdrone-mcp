@@ -62,6 +62,9 @@ test("artifact parser rejects traversal, duplicate IDs, oversized and invalid re
   await assert.rejects(() =>
     z.generateAsync({ type: "nodebuffer" }).then(parseCases),
   );
+  const traversal = new JSZip();
+  traversal.file("../cases.ndjson", JSON.stringify(r));
+  await assert.rejects(() => traversal.generateAsync({type:"nodebuffer"}).then(parseCases));
   const bad = new JSZip();
   bad.file("cases.ndjson", [r, r].map(JSON.stringify).join("\n"));
   await assert.rejects(() =>
