@@ -33,6 +33,11 @@ const codes = new Set([
   "TOKEN_REQUIRED",
   "INVALID_API_URL",
   "READ_PATH_DENIED",
+  "WRITE_PATH_DENIED",
+  "INVALID_REQUEST",
+  "REQUEST_LIMIT",
+  "CONFLICT",
+  "VALIDATION_FAILED",
   "BUSY",
   "UNAUTHENTICATED",
   "FORBIDDEN",
@@ -44,14 +49,25 @@ const codes = new Set([
   "CANCELLED_OR_TIMEOUT",
 ]);
 export const safeError = (error) =>
-  codes.has(error?.code) ? error.code : "READ_FAILED";
+  codes.has(error?.code) ? error.code : "REQUEST_FAILED";
 export function normalizedRoute(path) {
+  if (
+    path === "/leads/batch" ||
+    path === "/leads/batch/preview" ||
+    path === "/leads/export" ||
+    path === "/imports/preview"
+  )
+    return path;
   return path
     .replace(
       /\/team\/members\/[^/]+\/activities$/,
       "/team/members/:uid/activities",
     )
-    .replace(/\/(leads|tasks|imports)\/[^/]+/, "/$1/:id");
+    .replace(
+      /\/(leads|tasks|imports|activities|notifications)\/[^/]+/,
+      "/$1/:id",
+    )
+    .replace(/\/attachments\/[^/]+/, "/attachments/:attachmentId");
 }
 function endpoint(value) {
   const u = new URL(value);
@@ -305,11 +321,11 @@ async function initializeTelemetry(
         fn,
         SpanKind.SERVER,
       ),
-    http: (path, fn) =>
+    http: (path, fn, method = "GET") =>
       observed(
         httpTracer,
-        "HTTP GET " + normalizedRoute(path),
-        { "http.request.method": "GET", "http.route": normalizedRoute(path) },
+        "HTTP " + method + " " + normalizedRoute(path),
+        { "http.request.method": method, "http.route": normalizedRoute(path) },
         fn,
         SpanKind.CLIENT,
       ),

@@ -1,0 +1,1817 @@
+{
+  "apiVersion": "1.29.0",
+  "operations": [
+    {
+      "name": "export_leads",
+      "method": "POST",
+      "path": "/leads/export",
+      "scope": "leads:export",
+      "description": "Requires: leads:read. Personal access token scope: leads:export. Server verifies current membership and assigned/all lead scope. Private responses use Cache-Control: no-store. Paged report data, not a binary file. Export must be enabled. Uses all supplied lead filters; selected available columns only. Follow nextCursor, including sparse pages, until null. Cursors bind filters, column order, field configuration and workspace policy. Audit records contain counts only. Maximum 120 pages per user per minute. Rows reflect current values while paging, not a transactional snapshot.",
+      "parameters": [
+        {
+          "in": "header",
+          "name": "Idempotency-Key",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "description": "Reuse the same key and body after an uncertain response."
+        }
+      ],
+      "body": {
+        "application/json": {
+          "schema": {
+            "type": "object",
+            "properties": {
+              "columns": {
+                "minItems": 1,
+                "maxItems": 80,
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "maxLength": 80
+                },
+                "uniqueItems": true
+              },
+              "filters": {
+                "default": [],
+                "maxItems": 16,
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "field": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "enum": [
+                            "serial",
+                            "source",
+                            "name",
+                            "phone",
+                            "email",
+                            "company",
+                            "location",
+                            "zone",
+                            "enquiryDate",
+                            "legacyStatus",
+                            "stage",
+                            "initialDiscussion",
+                            "followUp1",
+                            "followUp2",
+                            "followUp3",
+                            "followUp4",
+                            "comments",
+                            "latestComment",
+                            "assignedToUid",
+                            "lastCallOutcome",
+                            "lastContactAt",
+                            "doNotContact",
+                            "needsReview"
+                          ]
+                        },
+                        {
+                          "type": "string",
+                          "pattern": "^cf_[a-z0-9_]{1,60}$"
+                        }
+                      ]
+                    },
+                    "op": {
+                      "type": "string",
+                      "enum": [
+                        "contains",
+                        "equals",
+                        "exact",
+                        "startsWith",
+                        "empty",
+                        "notEmpty",
+                        "before",
+                        "after"
+                      ]
+                    },
+                    "value": {
+                      "default": "",
+                      "type": "string",
+                      "maxLength": 400
+                    }
+                  },
+                  "required": [
+                    "field",
+                    "op"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "stage": {
+                "type": "string",
+                "maxLength": 100
+              },
+              "source": {
+                "type": "string",
+                "maxLength": 100
+              },
+              "assignedToUid": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 128
+              },
+              "search": {
+                "type": "string",
+                "maxLength": 200
+              },
+              "field": {
+                "type": "string",
+                "enum": [
+                  "name",
+                  "company",
+                  "phone",
+                  "email",
+                  "location",
+                  "zone"
+                ]
+              },
+              "cursor": {
+                "type": "string",
+                "maxLength": 4000
+              },
+              "limit": {
+                "default": 100,
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 100
+              }
+            },
+            "required": [
+              "columns"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "operationId": "post_leads_export"
+    },
+    {
+      "name": "create_lead",
+      "method": "POST",
+      "path": "/leads",
+      "scope": "leads:create",
+      "description": "Requires: leads:create. Personal access token scope: leads:create. Server verifies current membership and assigned/all lead scope. Private responses use Cache-Control: no-store.",
+      "parameters": [
+        {
+          "in": "header",
+          "name": "Idempotency-Key",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "description": "Reuse the same key and body after an uncertain response."
+        }
+      ],
+      "body": {
+        "application/json": {
+          "schema": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "default": "",
+                "type": "string",
+                "maxLength": 200
+              },
+              "phone": {
+                "default": "",
+                "type": "string",
+                "maxLength": 40
+              },
+              "email": {
+                "default": "",
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "maxLength": 254,
+                    "format": "email",
+                    "pattern": "^(?:[A-Za-z0-9_'+\\-]+\\.)*[A-Za-z0-9_'+\\-]*[A-Za-z0-9_+-]@(?:[A-Za-z0-9][A-Za-z0-9\\-]*\\.)+[A-Za-z]{2,}$"
+                  },
+                  {
+                    "type": "string",
+                    "const": ""
+                  }
+                ]
+              },
+              "company": {
+                "default": "",
+                "type": "string",
+                "maxLength": 200
+              },
+              "jobTitle": {
+                "default": "",
+                "type": "string",
+                "maxLength": 200
+              },
+              "source": {
+                "default": "Direct enquiry",
+                "type": "string",
+                "maxLength": 200
+              },
+              "location": {
+                "default": "",
+                "type": "string",
+                "maxLength": 200
+              },
+              "zone": {
+                "default": "",
+                "type": "string",
+                "maxLength": 200
+              },
+              "enquiryDate": {
+                "default": "",
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "format": "date",
+                    "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+                  },
+                  {
+                    "type": "string",
+                    "const": ""
+                  }
+                ]
+              },
+              "stage": {
+                "default": "New",
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 100
+              },
+              "comments": {
+                "default": "",
+                "type": "string",
+                "maxLength": 4000
+              },
+              "initialDiscussion": {
+                "default": "",
+                "type": "string",
+                "maxLength": 4000
+              },
+              "followUp1": {
+                "default": "",
+                "type": "string",
+                "maxLength": 4000
+              },
+              "followUp2": {
+                "default": "",
+                "type": "string",
+                "maxLength": 4000
+              },
+              "followUp3": {
+                "default": "",
+                "type": "string",
+                "maxLength": 4000
+              },
+              "followUp4": {
+                "default": "",
+                "type": "string",
+                "maxLength": 4000
+              },
+              "originalPhone": {
+                "default": "",
+                "type": "string",
+                "maxLength": 200
+              },
+              "originalEnquiryDate": {
+                "default": "",
+                "type": "string",
+                "maxLength": 100
+              },
+              "legacyStatus": {
+                "default": "",
+                "type": "string",
+                "maxLength": 200
+              },
+              "serial": {
+                "default": "",
+                "type": "string",
+                "maxLength": 80
+              },
+              "customFields": {
+                "default": {},
+                "type": "object",
+                "propertyNames": {
+                  "type": "string",
+                  "pattern": "^cf_[a-z0-9_]{1,60}$"
+                },
+                "additionalProperties": {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "maxLength": 4000
+                    },
+                    {
+                      "type": "number"
+                    },
+                    {
+                      "type": "boolean"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                }
+              },
+              "tags": {
+                "default": [],
+                "maxItems": 20,
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "maxLength": 40
+                }
+              },
+              "website": {
+                "default": "",
+                "type": "string",
+                "maxLength": 300
+              },
+              "countryCode": {
+                "default": "+91",
+                "type": "string",
+                "pattern": "^\\+\\d{1,3}$"
+              },
+              "allowDuplicate": {
+                "default": false,
+                "type": "boolean"
+              },
+              "needsReview": {
+                "default": false,
+                "type": "boolean"
+              }
+            },
+            "additionalProperties": false
+          }
+        }
+      },
+      "operationId": "post_leads"
+    },
+    {
+      "name": "reserve_attachment",
+      "method": "POST",
+      "path": "/leads/{id}/attachments",
+      "scope": "attachments:write",
+      "description": "Requires: leads:edit. Personal access token scope: attachments:write. Server verifies current membership and assigned/all lead scope. Private responses use Cache-Control: no-store. Private lead files in Firebase Storage. 8 MiB per file, 50 active/pending per lead. Metadata reservation requires UUID Idempotency-Key; PUT uploads application/octet-stream after type/size checks. Same bytes can be retried for one hour. Only the reserver can complete an upload. No public download URL is issued; current membership, token and lead scope are rechecked for downloads. Removal hides access immediately and schedules physical cleanup; abandoned pending uploads expire.",
+      "parameters": [
+        {
+          "in": "path",
+          "name": "id",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "in": "header",
+          "name": "Idempotency-Key",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "description": "Reuse the same key and body after an uncertain response."
+        }
+      ],
+      "body": {
+        "application/json": {
+          "schema": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 180
+              },
+              "size": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 8388608
+              },
+              "contentType": {
+                "type": "string",
+                "enum": [
+                  "image/jpeg",
+                  "image/png",
+                  "image/gif",
+                  "image/webp",
+                  "application/pdf",
+                  "text/plain",
+                  "text/csv",
+                  "application/msword",
+                  "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                  "application/vnd.ms-excel",
+                  "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                  "application/vnd.ms-powerpoint",
+                  "application/vnd.openxmlformats-officedocument.presentationml.presentation"
+                ]
+              }
+            },
+            "required": [
+              "name",
+              "size",
+              "contentType"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "operationId": "post_leads__id_attachments"
+    },
+    {
+      "name": "upload_attachment",
+      "method": "PUT",
+      "path": "/leads/{id}/attachments/{attachmentId}/content",
+      "scope": "attachments:write",
+      "description": "Requires: leads:edit. Personal access token scope: attachments:write. Server verifies current membership and assigned/all lead scope. Private responses use Cache-Control: no-store. Private lead files in Firebase Storage. 8 MiB per file, 50 active/pending per lead. Metadata reservation requires UUID Idempotency-Key; PUT uploads application/octet-stream after type/size checks. Same bytes can be retried for one hour. Only the reserver can complete an upload. No public download URL is issued; current membership, token and lead scope are rechecked for downloads. Removal hides access immediately and schedules physical cleanup; abandoned pending uploads expire.",
+      "parameters": [
+        {
+          "in": "path",
+          "name": "id",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "in": "path",
+          "name": "attachmentId",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "body": {
+        "application/octet-stream": {
+          "schema": {
+            "type": "string",
+            "format": "binary",
+            "maxLength": 8388608
+          }
+        }
+      },
+      "operationId": "put_leads__id_attachments__attachmentId_content"
+    },
+    {
+      "name": "delete_attachment",
+      "method": "DELETE",
+      "path": "/leads/{id}/attachments/{attachmentId}",
+      "scope": "attachments:write",
+      "description": "Requires: leads:edit. Personal access token scope: attachments:write. Server verifies current membership and assigned/all lead scope. Private responses use Cache-Control: no-store. Private lead files in Firebase Storage. 8 MiB per file, 50 active/pending per lead. Metadata reservation requires UUID Idempotency-Key; PUT uploads application/octet-stream after type/size checks. Same bytes can be retried for one hour. Only the reserver can complete an upload. No public download URL is issued; current membership, token and lead scope are rechecked for downloads. Removal hides access immediately and schedules physical cleanup; abandoned pending uploads expire.",
+      "parameters": [
+        {
+          "in": "path",
+          "name": "id",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "in": "path",
+          "name": "attachmentId",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "body": {
+        "application/json": {
+          "schema": {
+            "type": "object",
+            "properties": {
+              "expectedVersion": {
+                "type": "integer",
+                "exclusiveMinimum": 0,
+                "maximum": 9007199254740991
+              }
+            },
+            "required": [
+              "expectedVersion"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "operationId": "delete_leads__id_attachments__attachmentId"
+    },
+    {
+      "name": "preview_lead_batch",
+      "method": "POST",
+      "path": "/leads/batch/preview",
+      "scope": "leads:bulk-edit",
+      "description": "Requires: leads:edit. Personal access token scope: leads:bulk-edit. Server verifies current membership and assigned/all lead scope. Private responses use Cache-Control: no-store. Explicit selection of 1–25 unique lead IDs and expected versions. Preview writes nothing; apply is atomic and requires a UUID Idempotency-Key. Current access, all versions, field definitions and assignee are rechecked at commit. Identity/contact/discussion/suppression fields are excluded. Assignment changes cancel pending tasks and notify new owners; PAT reassignment also requires assignments:write. Batch task cancellation is bounded to 200 pending tasks and serialized old/new/task data to 2 MiB; reduce selection if rejected.",
+      "parameters": [],
+      "body": {
+        "application/json": {
+          "schema": {
+            "type": "object",
+            "properties": {
+              "items": {
+                "minItems": 1,
+                "maxItems": 25,
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "pattern": "^[A-Za-z0-9_.:-]{1,150}$"
+                    },
+                    "expectedVersion": {
+                      "type": "integer",
+                      "exclusiveMinimum": 0,
+                      "maximum": 9007199254740991
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "expectedVersion"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "changes": {
+                "type": "object",
+                "properties": {
+                  "company": {
+                    "type": "string",
+                    "maxLength": 200
+                  },
+                  "jobTitle": {
+                    "type": "string",
+                    "maxLength": 200
+                  },
+                  "source": {
+                    "type": "string",
+                    "maxLength": 200
+                  },
+                  "location": {
+                    "type": "string",
+                    "maxLength": 200
+                  },
+                  "zone": {
+                    "type": "string",
+                    "maxLength": 200
+                  },
+                  "legacyStatus": {
+                    "type": "string",
+                    "maxLength": 200
+                  },
+                  "stage": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 100
+                  },
+                  "tags": {
+                    "maxItems": 20,
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "maxLength": 40
+                    }
+                  },
+                  "customFields": {
+                    "type": "object",
+                    "propertyNames": {
+                      "type": "string",
+                      "pattern": "^cf_[a-z0-9_]{1,60}$"
+                    },
+                    "additionalProperties": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "maxLength": 4000
+                        },
+                        {
+                          "type": "number"
+                        },
+                        {
+                          "type": "boolean"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    }
+                  }
+                },
+                "additionalProperties": false
+              },
+              "assignedToUid": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 100
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            },
+            "required": [
+              "items",
+              "changes"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "operationId": "post_leads_batch_preview"
+    },
+    {
+      "name": "apply_lead_batch",
+      "method": "POST",
+      "path": "/leads/batch",
+      "scope": "leads:bulk-edit",
+      "description": "Requires: leads:edit. Personal access token scope: leads:bulk-edit. Server verifies current membership and assigned/all lead scope. Private responses use Cache-Control: no-store. Explicit selection of 1–25 unique lead IDs and expected versions. Preview writes nothing; apply is atomic and requires a UUID Idempotency-Key. Current access, all versions, field definitions and assignee are rechecked at commit. Identity/contact/discussion/suppression fields are excluded. Assignment changes cancel pending tasks and notify new owners; PAT reassignment also requires assignments:write. Batch task cancellation is bounded to 200 pending tasks and serialized old/new/task data to 2 MiB; reduce selection if rejected.",
+      "parameters": [
+        {
+          "in": "header",
+          "name": "Idempotency-Key",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "description": "Reuse the same key and body after an uncertain response."
+        }
+      ],
+      "body": {
+        "application/json": {
+          "schema": {
+            "type": "object",
+            "properties": {
+              "items": {
+                "minItems": 1,
+                "maxItems": 25,
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "pattern": "^[A-Za-z0-9_.:-]{1,150}$"
+                    },
+                    "expectedVersion": {
+                      "type": "integer",
+                      "exclusiveMinimum": 0,
+                      "maximum": 9007199254740991
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "expectedVersion"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "changes": {
+                "type": "object",
+                "properties": {
+                  "company": {
+                    "type": "string",
+                    "maxLength": 200
+                  },
+                  "jobTitle": {
+                    "type": "string",
+                    "maxLength": 200
+                  },
+                  "source": {
+                    "type": "string",
+                    "maxLength": 200
+                  },
+                  "location": {
+                    "type": "string",
+                    "maxLength": 200
+                  },
+                  "zone": {
+                    "type": "string",
+                    "maxLength": 200
+                  },
+                  "legacyStatus": {
+                    "type": "string",
+                    "maxLength": 200
+                  },
+                  "stage": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 100
+                  },
+                  "tags": {
+                    "maxItems": 20,
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "maxLength": 40
+                    }
+                  },
+                  "customFields": {
+                    "type": "object",
+                    "propertyNames": {
+                      "type": "string",
+                      "pattern": "^cf_[a-z0-9_]{1,60}$"
+                    },
+                    "additionalProperties": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "maxLength": 4000
+                        },
+                        {
+                          "type": "number"
+                        },
+                        {
+                          "type": "boolean"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    }
+                  }
+                },
+                "additionalProperties": false
+              },
+              "assignedToUid": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 100
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            },
+            "required": [
+              "items",
+              "changes"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "operationId": "post_leads_batch"
+    },
+    {
+      "name": "update_lead",
+      "method": "PATCH",
+      "path": "/leads/{id}",
+      "scope": "leads:edit",
+      "description": "Requires: leads:edit. Personal access token scope: leads:edit. Server verifies current membership and assigned/all lead scope. Private responses use Cache-Control: no-store.",
+      "parameters": [
+        {
+          "in": "path",
+          "name": "id",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "body": {
+        "application/json": {
+          "schema": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "maxLength": 200
+              },
+              "phone": {
+                "type": "string",
+                "maxLength": 40
+              },
+              "email": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "maxLength": 254,
+                    "format": "email",
+                    "pattern": "^(?:[A-Za-z0-9_'+\\-]+\\.)*[A-Za-z0-9_'+\\-]*[A-Za-z0-9_+-]@(?:[A-Za-z0-9][A-Za-z0-9\\-]*\\.)+[A-Za-z]{2,}$"
+                  },
+                  {
+                    "type": "string",
+                    "const": ""
+                  }
+                ]
+              },
+              "company": {
+                "type": "string",
+                "maxLength": 200
+              },
+              "jobTitle": {
+                "type": "string",
+                "maxLength": 200
+              },
+              "source": {
+                "type": "string",
+                "maxLength": 200
+              },
+              "location": {
+                "type": "string",
+                "maxLength": 200
+              },
+              "zone": {
+                "type": "string",
+                "maxLength": 200
+              },
+              "enquiryDate": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "format": "date",
+                    "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+                  },
+                  {
+                    "type": "string",
+                    "const": ""
+                  }
+                ]
+              },
+              "stage": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 100
+              },
+              "comments": {
+                "type": "string",
+                "maxLength": 4000
+              },
+              "initialDiscussion": {
+                "type": "string",
+                "maxLength": 4000
+              },
+              "followUp1": {
+                "type": "string",
+                "maxLength": 4000
+              },
+              "followUp2": {
+                "type": "string",
+                "maxLength": 4000
+              },
+              "followUp3": {
+                "type": "string",
+                "maxLength": 4000
+              },
+              "followUp4": {
+                "type": "string",
+                "maxLength": 4000
+              },
+              "originalPhone": {
+                "type": "string",
+                "maxLength": 200
+              },
+              "originalEnquiryDate": {
+                "type": "string",
+                "maxLength": 100
+              },
+              "legacyStatus": {
+                "type": "string",
+                "maxLength": 200
+              },
+              "serial": {
+                "type": "string",
+                "maxLength": 80
+              },
+              "customFields": {
+                "type": "object",
+                "propertyNames": {
+                  "type": "string",
+                  "pattern": "^cf_[a-z0-9_]{1,60}$"
+                },
+                "additionalProperties": {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "maxLength": 4000
+                    },
+                    {
+                      "type": "number"
+                    },
+                    {
+                      "type": "boolean"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                }
+              },
+              "tags": {
+                "maxItems": 20,
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "maxLength": 40
+                }
+              },
+              "website": {
+                "type": "string",
+                "maxLength": 300
+              },
+              "countryCode": {
+                "type": "string",
+                "pattern": "^\\+\\d{1,3}$"
+              },
+              "needsReview": {
+                "type": "boolean"
+              },
+              "expectedVersion": {
+                "type": "integer",
+                "exclusiveMinimum": 0,
+                "maximum": 9007199254740991
+              },
+              "doNotContact": {
+                "type": "boolean"
+              },
+              "suppressionReason": {
+                "type": "string",
+                "maxLength": 500
+              }
+            },
+            "required": [
+              "expectedVersion"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "operationId": "patch_leads__id"
+    },
+    {
+      "name": "archive_lead",
+      "method": "POST",
+      "path": "/leads/{id}/archive",
+      "scope": "leads:archive",
+      "description": "Requires: leads:edit. Personal access token scope: leads:archive. Server verifies current membership and assigned/all lead scope. Private responses use Cache-Control: no-store. The first archive transition atomically records an actor-attributed Lead archived activity. Repeating with the current archived version returns OK without another activity. Only Pending outreach tasks are cancelled; administrative tasks retain their state.",
+      "parameters": [
+        {
+          "in": "path",
+          "name": "id",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "body": {
+        "application/json": {
+          "schema": {
+            "type": "object",
+            "properties": {
+              "expectedVersion": {
+                "type": "integer",
+                "exclusiveMinimum": 0,
+                "maximum": 9007199254740991
+              }
+            },
+            "required": [
+              "expectedVersion"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "operationId": "post_leads__id_archive"
+    },
+    {
+      "name": "restore_lead",
+      "method": "POST",
+      "path": "/leads/{id}/restore",
+      "scope": "leads:archive",
+      "description": "Requires: leads:edit. Personal access token scope: leads:archive. Server verifies current membership and assigned/all lead scope. Private responses use Cache-Control: no-store. Restore an accessible archived lead using expectedVersion. Retains suppression, assignment and shared contact ownership. Conflicting newly acquired contacts return DUPLICATE. Atomically records an actor-attributed restore activity and lifecycle event. Cancelled outreach is never rescheduled.",
+      "parameters": [
+        {
+          "in": "path",
+          "name": "id",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "in": "header",
+          "name": "Idempotency-Key",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "description": "Reuse the same key and body after an uncertain response."
+        }
+      ],
+      "body": {
+        "application/json": {
+          "schema": {
+            "type": "object",
+            "properties": {
+              "expectedVersion": {
+                "type": "integer",
+                "exclusiveMinimum": 0,
+                "maximum": 9007199254740991
+              }
+            },
+            "required": [
+              "expectedVersion"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "operationId": "post_leads__id_restore"
+    },
+    {
+      "name": "assign_lead",
+      "method": "PATCH",
+      "path": "/leads/{id}/assignment",
+      "scope": "assignments:write",
+      "description": "Requires: assignments:write. Personal access token scope: assignments:write. Server verifies current membership and assigned/all lead scope. Private responses use Cache-Control: no-store.",
+      "parameters": [
+        {
+          "in": "path",
+          "name": "id",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "body": {
+        "application/json": {
+          "schema": {
+            "type": "object",
+            "properties": {
+              "expectedVersion": {
+                "type": "integer",
+                "exclusiveMinimum": 0,
+                "maximum": 9007199254740991
+              },
+              "assignedToUid": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 100
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            },
+            "required": [
+              "expectedVersion",
+              "assignedToUid"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "operationId": "patch_leads__id_assignment"
+    },
+    {
+      "name": "create_activity",
+      "method": "POST",
+      "path": "/leads/{id}/activities",
+      "scope": "activities:write",
+      "description": "Requires: activities:write. Personal access token scope: activities:write. Server verifies current membership and assigned/all lead scope. Private responses use Cache-Control: no-store. Including stage requires leads:edit; including a manual followUp requires tasks:write. Notes may trigger automatic reminder analysis according to owner preferences.",
+      "parameters": [
+        {
+          "in": "path",
+          "name": "id",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "in": "header",
+          "name": "Idempotency-Key",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "description": "Reuse the same key and body after an uncertain response."
+        }
+      ],
+      "body": {
+        "application/json": {
+          "schema": {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "enum": [
+                  "call",
+                  "note"
+                ]
+              },
+              "outcome": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 100
+              },
+              "disposition": {
+                "default": "None",
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 100
+              },
+              "notes": {
+                "default": "",
+                "type": "string",
+                "maxLength": 4000
+              },
+              "durationSeconds": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 86400
+              },
+              "stage": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 100
+              },
+              "followUp": {
+                "type": "object",
+                "properties": {
+                  "title": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 250
+                  },
+                  "dueAt": {
+                    "type": "string",
+                    "format": "date-time",
+                    "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+                  },
+                  "timezone": {
+                    "default": "Asia/Kolkata",
+                    "type": "string",
+                    "maxLength": 100
+                  },
+                  "kind": {
+                    "default": "outreach",
+                    "type": "string",
+                    "enum": [
+                      "outreach",
+                      "administrative"
+                    ]
+                  }
+                },
+                "required": [
+                  "title",
+                  "dueAt"
+                ],
+                "additionalProperties": false
+              },
+              "expectedVersion": {
+                "type": "integer",
+                "exclusiveMinimum": 0,
+                "maximum": 9007199254740991
+              }
+            },
+            "required": [
+              "type",
+              "expectedVersion"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "operationId": "post_leads__id_activities"
+    },
+    {
+      "name": "correct_activity",
+      "method": "POST",
+      "path": "/activities/{id}/corrections",
+      "scope": "activities:write",
+      "description": "Requires: activities:write. Personal access token scope: activities:write. Server verifies current membership and assigned/all lead scope. Private responses use Cache-Control: no-store.",
+      "parameters": [
+        {
+          "in": "path",
+          "name": "id",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "in": "header",
+          "name": "Idempotency-Key",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "description": "Reuse the same key and body after an uncertain response."
+        }
+      ],
+      "body": {
+        "application/json": {
+          "schema": {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "enum": [
+                  "call",
+                  "note"
+                ]
+              },
+              "outcome": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 100
+              },
+              "disposition": {
+                "default": "None",
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 100
+              },
+              "notes": {
+                "default": "",
+                "type": "string",
+                "maxLength": 4000
+              },
+              "durationSeconds": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 86400
+              },
+              "expectedRevision": {
+                "type": "integer",
+                "exclusiveMinimum": 0,
+                "maximum": 9007199254740991
+              }
+            },
+            "required": [
+              "type",
+              "disposition",
+              "notes",
+              "expectedRevision"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "operationId": "post_activities__id_corrections"
+    },
+    {
+      "name": "update_automatic_reminder",
+      "method": "PATCH",
+      "path": "/activities/{id}/automatic-reminder",
+      "scope": "tasks:write",
+      "description": "Requires: tasks:write. Personal access token scope: tasks:write. Server verifies current membership and assigned/all lead scope. Private responses use Cache-Control: no-store.",
+      "parameters": [
+        {
+          "in": "path",
+          "name": "id",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "body": {
+        "application/json": {
+          "schema": {
+            "oneOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "action": {
+                    "type": "string",
+                    "const": "retry"
+                  },
+                  "expectedRevision": {
+                    "type": "integer",
+                    "exclusiveMinimum": 0,
+                    "maximum": 9007199254740991
+                  }
+                },
+                "required": [
+                  "action",
+                  "expectedRevision"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "action": {
+                    "type": "string",
+                    "const": "dismiss"
+                  },
+                  "expectedRevision": {
+                    "type": "integer",
+                    "exclusiveMinimum": 0,
+                    "maximum": 9007199254740991
+                  }
+                },
+                "required": [
+                  "action",
+                  "expectedRevision"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "action": {
+                    "type": "string",
+                    "const": "schedule"
+                  },
+                  "expectedRevision": {
+                    "type": "integer",
+                    "exclusiveMinimum": 0,
+                    "maximum": 9007199254740991
+                  },
+                  "task": {
+                    "type": "object",
+                    "properties": {
+                      "title": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 250
+                      },
+                      "dueAt": {
+                        "type": "string",
+                        "format": "date-time",
+                        "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+                      },
+                      "timezone": {
+                        "default": "Asia/Kolkata",
+                        "type": "string",
+                        "maxLength": 100
+                      },
+                      "kind": {
+                        "default": "outreach",
+                        "type": "string",
+                        "enum": [
+                          "outreach",
+                          "administrative"
+                        ]
+                      }
+                    },
+                    "required": [
+                      "title",
+                      "dueAt"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "required": [
+                  "action",
+                  "expectedRevision",
+                  "task"
+                ],
+                "additionalProperties": false
+              }
+            ]
+          }
+        }
+      },
+      "operationId": "patch_activities__id_automatic_reminder"
+    },
+    {
+      "name": "create_task",
+      "method": "POST",
+      "path": "/tasks",
+      "scope": "tasks:write",
+      "description": "Requires: tasks:write. Personal access token scope: tasks:write. Server verifies current membership and assigned/all lead scope. Private responses use Cache-Control: no-store.",
+      "parameters": [
+        {
+          "in": "header",
+          "name": "Idempotency-Key",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "description": "Reuse the same key and body after an uncertain response."
+        }
+      ],
+      "body": {
+        "application/json": {
+          "schema": {
+            "type": "object",
+            "properties": {
+              "title": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 250
+              },
+              "leadId": {
+                "type": "string",
+                "maxLength": 100
+              },
+              "dueAt": {
+                "type": "string",
+                "format": "date-time",
+                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+              },
+              "timezone": {
+                "default": "Asia/Kolkata",
+                "type": "string",
+                "maxLength": 100
+              },
+              "kind": {
+                "default": "outreach",
+                "type": "string",
+                "enum": [
+                  "outreach",
+                  "administrative"
+                ]
+              }
+            },
+            "required": [
+              "title",
+              "dueAt"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "operationId": "post_tasks"
+    },
+    {
+      "name": "update_task",
+      "method": "PATCH",
+      "path": "/tasks/{id}",
+      "scope": "tasks:write",
+      "description": "Requires: tasks:write. Personal access token scope: tasks:write. Server verifies current membership and assigned/all lead scope. Private responses use Cache-Control: no-store.",
+      "parameters": [
+        {
+          "in": "path",
+          "name": "id",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "body": {
+        "application/json": {
+          "schema": {
+            "type": "object",
+            "properties": {
+              "expectedVersion": {
+                "type": "integer",
+                "exclusiveMinimum": 0,
+                "maximum": 9007199254740991
+              },
+              "title": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 250
+              },
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "outreach",
+                  "administrative"
+                ]
+              },
+              "dueAt": {
+                "type": "string",
+                "format": "date-time",
+                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+              },
+              "timezone": {
+                "type": "string",
+                "maxLength": 100
+              },
+              "state": {
+                "type": "string",
+                "enum": [
+                  "Pending",
+                  "Completed",
+                  "Cancelled"
+                ]
+              }
+            },
+            "required": [
+              "expectedVersion"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "operationId": "patch_tasks__id"
+    },
+    {
+      "name": "delete_task",
+      "method": "DELETE",
+      "path": "/tasks/{id}",
+      "scope": "tasks:write",
+      "description": "Requires: tasks:write. Personal access token scope: tasks:write. Server verifies current membership and assigned/all lead scope. Private responses use Cache-Control: no-store.",
+      "parameters": [
+        {
+          "in": "path",
+          "name": "id",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "body": {
+        "application/json": {
+          "schema": {
+            "type": "object",
+            "properties": {
+              "expectedVersion": {
+                "type": "integer",
+                "exclusiveMinimum": 0,
+                "maximum": 9007199254740991
+              }
+            },
+            "required": [
+              "expectedVersion"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "operationId": "delete_tasks__id"
+    },
+    {
+      "name": "preview_import",
+      "method": "POST",
+      "path": "/imports/preview",
+      "scope": "imports:write",
+      "description": "Requires: imports:write. Personal access token scope: imports:write. Server verifies current membership and assigned/all lead scope. Private responses use Cache-Control: no-store.",
+      "parameters": [
+        {
+          "in": "header",
+          "name": "Idempotency-Key",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "description": "Reuse the same key and body after an uncertain response."
+        }
+      ],
+      "body": {
+        "application/json": {
+          "schema": {
+            "type": "object",
+            "properties": {
+              "filename": {
+                "type": "string",
+                "maxLength": 250
+              },
+              "sheet": {
+                "type": "string",
+                "maxLength": 100
+              },
+              "rows": {
+                "maxItems": 5000,
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "propertyNames": {
+                    "type": "string"
+                  },
+                  "additionalProperties": {},
+                  "properties": {
+                    "importComments": {
+                      "type": "array",
+                      "maxItems": 40,
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "sourceColumn": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 100
+                          },
+                          "sourceIndex": {
+                            "type": "integer",
+                            "minimum": 0,
+                            "maximum": 39
+                          },
+                          "notes": {
+                            "type": "string",
+                            "maxLength": 4000
+                          }
+                        },
+                        "required": [
+                          "sourceColumn",
+                          "sourceIndex",
+                          "notes"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "description": "Each nonempty selected spreadsheet cell becomes a separate historical note. Other keys are standard lead fields."
+                    }
+                  }
+                }
+              },
+              "statusMap": {
+                "default": {},
+                "type": "object",
+                "propertyNames": {
+                  "type": "string"
+                },
+                "additionalProperties": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 100
+                }
+              },
+              "statusField": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "enum": [
+                      "none",
+                      "legacyStatus",
+                      "stage",
+                      "source",
+                      "zone",
+                      "location"
+                    ]
+                  },
+                  {
+                    "type": "string",
+                    "pattern": "^cf_[a-z0-9_]{1,60}$"
+                  }
+                ],
+                "description": "Reviewed imports only. New browser uploads default to legacyStatus (Enquiry status): retain workbook text unless explicitly remapped. Choose none, an available built-in category or custom text/select field. Hidden/retired targets and targets already supplied by another mapped column are rejected. Non-text categories require configured values. Omission preserves legacy stage mapping for old API clients. Original sourceStatus remains in permission-filtered import row details."
+              },
+              "dateOrder": {
+                "default": "DMY",
+                "type": "string",
+                "enum": [
+                  "DMY",
+                  "MDY"
+                ]
+              },
+              "blankRows": {
+                "default": 0,
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991
+              },
+              "duplicateMode": {
+                "default": "skip",
+                "type": "string",
+                "enum": [
+                  "skip",
+                  "keep",
+                  "update"
+                ]
+              },
+              "reviewed": {
+                "type": "boolean"
+              },
+              "sourceImportId": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 150
+              }
+            },
+            "required": [
+              "filename",
+              "sheet",
+              "rows"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "operationId": "post_imports_preview"
+    },
+    {
+      "name": "commit_import",
+      "method": "POST",
+      "path": "/imports/{id}/commit",
+      "scope": "imports:write",
+      "description": "Requires: imports:write. Personal access token scope: imports:write. Server verifies current membership and assigned/all lead scope. Private responses use Cache-Control: no-store.",
+      "parameters": [
+        {
+          "in": "path",
+          "name": "id",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "in": "header",
+          "name": "Idempotency-Key",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "description": "Reuse the same key and body after an uncertain response."
+        }
+      ],
+      "body": {
+        "application/json": {
+          "schema": {
+            "anyOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "expectedVersion": {
+                    "type": "integer",
+                    "exclusiveMinimum": 0,
+                    "maximum": 9007199254740991
+                  }
+                },
+                "required": [
+                  "expectedVersion"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "type": "object",
+                "additionalProperties": false
+              }
+            ],
+            "description": "Reviewed jobs require expectedVersion. Legacy jobs accept an empty body."
+          }
+        }
+      },
+      "operationId": "post_imports__id_commit"
+    },
+    {
+      "name": "update_notification",
+      "method": "PATCH",
+      "path": "/notifications/{id}",
+      "scope": "notifications:write",
+      "description": "Requires: leads:read. Personal access token scope: notifications:write. Server verifies current membership and assigned/all lead scope. Private responses use Cache-Control: no-store.",
+      "parameters": [
+        {
+          "in": "path",
+          "name": "id",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "body": {
+        "application/json": {
+          "schema": {
+            "type": "object",
+            "properties": {
+              "read": {
+                "default": true,
+                "type": "boolean"
+              }
+            },
+            "additionalProperties": false
+          }
+        }
+      },
+      "operationId": "patch_notifications__id"
+    }
+  ],
+  "readPaths": [
+    "/workspace-settings",
+    "/field-options",
+    "/archived-leads",
+    "/leads",
+    "/leads/{id}/attachments",
+    "/leads/{id}/attachments/{attachmentId}/content",
+    "/leads/{id}",
+    "/leads/{id}/journey",
+    "/leads/{id}/activities",
+    "/tasks",
+    "/tasks/{id}",
+    "/leads/{id}/tasks",
+    "/lead-assignees",
+    "/team",
+    "/team/members/{uid}/activities",
+    "/imports/{id}",
+    "/imports/{id}/errors",
+    "/notifications",
+    "/scoring-settings",
+    "/lead-scores",
+    "/leads/{id}/score",
+    "/dashboard",
+    "/summary"
+  ]
+}

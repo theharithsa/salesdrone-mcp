@@ -18,5 +18,20 @@ await Promise.all([
 await telemetry
   .tool("salesdrone_get_lead", () => api.get("/leads/failure-id"))
   .catch(() => {});
+await telemetry.tool("salesdrone_update_lead", () =>
+  api.request({
+    method: "PATCH",
+    path: "/leads/private-id",
+    body: { expectedVersion: 1, comments: "PRIVATE_WRITE_SENTINEL" },
+  }),
+);
+await telemetry.tool("salesdrone_upload_attachment", () =>
+  api.request({
+    method: "PUT",
+    path: "/leads/private-id/attachments/private-file/content",
+    binary: true,
+    body: Buffer.from("PRIVATE_BINARY_SENTINEL"),
+  }),
+);
 await telemetry.flush();
 await telemetry.shutdown();

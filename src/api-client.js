@@ -2,15 +2,15 @@ import { VERSION } from "./version.js";
 export const DEFAULT_API_URL =
   "https://sales-drone-avinya.firebaseapp.com/api/v1";
 export const MAX_RESPONSE_BYTES = 2 * 1024 * 1024;
-const allowedPaths = [
-  /^\/leads$/,
-  /^\/archived-leads$/,
-  /^\/leads\/[A-Za-z0-9_.:-]+(?:\/(?:journey|activities|tasks|attachments|score))?$/,
-  /^\/(?:tasks|imports|notifications|lead-scores)(?:\/[A-Za-z0-9_.:-]+)?$/,
-  /^\/imports\/[A-Za-z0-9_.:-]+\/errors$/,
-  /^\/(?:summary|dashboard|field-options|workspace-settings|lead-assignees|team)$/,
-  /^\/team\/members\/[A-Za-z0-9_.:-]+\/activities$/,
-];
+import contract from "./write-contract.json" with { type: "json" };
+const routePattern = (path) =>
+  new RegExp("^" + path.replace(/\{\w+\}/g, "[A-Za-z0-9_.:-]{1,150}") + "$");
+const allowedPaths = contract.readPaths.map(routePattern);
+const writePaths = contract.operations.map((operation) => ({
+  ...operation,
+  pattern: routePattern(operation.path),
+}));
+export const MAX_REQUEST_BYTES = 10 * 1024 * 1024;
 export class SalesDroneReadError extends Error {
   constructor(code, status) {
     super(code);
@@ -42,12 +42,47 @@ export function createApiClient({
   )
     throw new SalesDroneReadError("INVALID_API_URL");
   let active = 0;
-  const get = async (path, query = {}, signal) => {
+  const request = async (
+    { path, query = {}, method = "GET", body, idempotencyKey, binary = false },
+    signal,
+  ) => {
+    const operation =
+      method === "GET"
+        ? null
+        : writePaths.find((o) => o.method === method && o.pattern.test(path));
     if (
-      !allowedPaths.some((pattern) => pattern.test(path)) ||
+      !(method === "GET"
+        ? allowedPaths.some((pattern) => pattern.test(path))
+        : operation) ||
       path.split("/").some((p) => p === "." || p === "..")
     )
-      throw new SalesDroneReadError("READ_PATH_DENIED");
+      throw new SalesDroneReadError(
+        method === "GET" ? "READ_PATH_DENIED" : "WRITE_PATH_DENIED",
+      );
+    let payload;
+    if (method !== "GET") {
+      const requiresKey = operation.parameters.some(
+        (p) => p.name === "Idempotency-Key",
+      );
+      if (
+        (requiresKey &&
+          !/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(
+            idempotencyKey || "",
+          )) ||
+        (!requiresKey && idempotencyKey !== undefined)
+      )
+        throw new SalesDroneReadError("INVALID_REQUEST");
+      if (binary !== Boolean(operation.body["application/octet-stream"]))
+        throw new SalesDroneReadError("INVALID_REQUEST");
+      payload = binary ? body : JSON.stringify(body);
+      if (
+        (!binary && typeof payload !== "string") ||
+        (binary && (!Buffer.isBuffer(payload) || payload.length > 8388608))
+      )
+        throw new SalesDroneReadError("INVALID_REQUEST");
+      if (Buffer.byteLength(payload) > MAX_REQUEST_BYTES)
+        throw new SalesDroneReadError("REQUEST_LIMIT");
+    }
     if (active >= 4) throw new SalesDroneReadError("BUSY");
     active++;
     const controller = new AbortController();
@@ -63,12 +98,21 @@ export function createApiClient({
             typeof value === "object" ? JSON.stringify(value) : String(value),
           );
       const response = await fetchImpl(url, {
-        method: "GET",
+        method,
+        ...(payload !== undefined ? { body: payload } : {}),
         redirect: "error",
         cache: "no-store",
         headers: {
           Authorization: "Bearer " + token,
           Accept: "application/json",
+          ...(payload !== undefined
+            ? {
+                "Content-Type": binary
+                  ? "application/octet-stream"
+                  : "application/json",
+              }
+            : {}),
+          ...(idempotencyKey ? { "Idempotency-Key": idempotencyKey } : {}),
           "User-Agent": "salesdrone-mcp/" + VERSION,
           ...(telemetry ? telemetry.traceHeaders() : {}),
         },
@@ -87,10 +131,15 @@ export function createApiClient({
                 ? "RATE_LIMITED"
                 : response.status === 404
                   ? "NOT_FOUND"
-                  : "API_ERROR",
+                  : response.status === 409
+                    ? "CONFLICT"
+                    : [400, 422].includes(response.status)
+                      ? "VALIDATION_FAILED"
+                      : "API_ERROR",
           response.status,
         );
       }
+      if (response.status === 204) return { ok: true };
       if (
         !/^application\/json(?:;|$)/i.test(
           response.headers.get("content-type") || "",
@@ -126,10 +175,16 @@ export function createApiClient({
       active--;
     }
   };
+  const observedRequest = (options, signal) =>
+    telemetry
+      ? telemetry.http(
+          options.path,
+          () => request(options, signal),
+          options.method || "GET",
+        )
+      : request(options, signal);
   return {
-    get: (path, query, signal) =>
-      telemetry
-        ? telemetry.http(path, () => get(path, query, signal))
-        : get(path, query, signal),
+    get: (path, query, signal) => observedRequest({ path, query }, signal),
+    request: observedRequest,
   };
 }
