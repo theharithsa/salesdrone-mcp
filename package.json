@@ -1,7 +1,7 @@
 {
   "name": "@theharithsa/salesdrone-mcp",
-  "version": "1.1.0",
-  "description": "Read-only MCP tools for SalesDrone leads, recorded team activity and people",
+  "version": "1.2.0",
+  "description": "Swagger-derived MCP tools for SalesDrone leads, tasks, assignments and recorded team activity",
   "type": "module",
   "bin": {
     "salesdrone-mcp": "src/cli.js"
@@ -41,7 +41,7 @@
     "test": "node --test test/*.test.js",
     "test:protocol": "node --test test/protocol.test.js",
     "build": "node scripts/build.mjs",
-    "check": "node scripts/check-package.mjs",
+    "check": "node scripts/check-package.mjs && node scripts/sync-api-contract.mjs --check",
     "security:scan": "node scripts/security-scan.mjs",
     "demo": "node scripts/demo.mjs"
   },

@@ -65,8 +65,14 @@ test("real stdio MCP initializes, lists and executes every read tool with no HTT
   );
   const { c, stderr } = await client(t, api.url);
   const listed = await c.listTools();
-  assert.equal(listed.tools.length, 21);
-  for (const tool of listed.tools) {
+  assert.equal(listed.tools.length, 41);
+  for (const tool of listed.tools.filter(
+    (t) =>
+      t.annotations.readOnlyHint &&
+      !["salesdrone_export_leads", "salesdrone_preview_lead_batch"].includes(
+        t.name,
+      ),
+  )) {
     assert.equal(tool.annotations.readOnlyHint, true);
     assert.equal(tool.annotations.destructiveHint, false);
     assert.equal(tool.inputSchema.additionalProperties, false);
@@ -92,13 +98,8 @@ test("real stdio MCP initializes, lists and executes every read tool with no HTT
   );
   assert.equal(stderr(), "");
   assert.ok(api.requests.some((r) => r.url.includes("filters=%5B%5D")));
-  assert.ok(
-    !listed.tools.some((t) =>
-      /write|create|update|delete|execute|request_url/.test(t.name),
-    ),
-  );
 });
-test("MCP rejects unknown arguments, path traversal, oversized pages and write tools before HTTP", async (t) => {
+test("MCP rejects unknown arguments, path traversal, oversized pages and undocumented tools before HTTP", async (t) => {
   const api = await mock(t, (_, res) => res.end("{}"));
   const { c } = await client(t, api.url);
   for (const args of [
@@ -120,7 +121,7 @@ test("MCP rejects unknown arguments, path traversal, oversized pages and write t
   assert.equal(traversal.isError, true);
   await assert.rejects(() =>
     c.callTool({
-      name: "salesdrone_update_lead",
+      name: "salesdrone_permanently_delete_lead",
       arguments: { id: "a", stage: "Won" },
     }),
   );
@@ -233,5 +234,7 @@ test("npm pack includes only public runtime code, README and licence", () => {
     "src/server.js",
     "src/telemetry.js",
     "src/version.js",
+    "src/write-contract.json",
+    "src/write-tools.js",
   ]);
 });

@@ -33,3 +33,5 @@ fetch bizevents, from:now()-1d
 CloudEvents use source=avinyatech.salesdrone.mcp.sdlc and allowlisted fields inside data. Dynatrace derives provider from source; initial1.1.0 events used https://github.com/theharithsa/salesdrone-mcp. Both sets retain actual source timestamps and stable IDs. Do not silently relabel historical events.
 
 Source metadata/GraphQL/artifact reads retry at most three times for selected transient failures, with a2MiB streaming response cap. Persistent authorization/invalid JSON stops. Pre-ingestion failures now archive a static errorCode/phase receipt, without raw errors, response bodies or credential-bearing URLs. Original failed attempts remain visible; successful retries do not rewrite history.
+
+1.2.0 write tools reuse the existing tool root + HTTP child/log/metric signals. HTTP method is the actual allowlisted GET/POST/PATCH/PUT/DELETE; routes normalize activity/notification IDs and nested attachment IDs. Never export bodies, base64, versions, UUID replay keys or resource IDs. Conflict/validation/request-limit codes are bounded. The API owns business commit events; a successful MCP request is not an independent transaction receipt.

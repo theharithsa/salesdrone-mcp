@@ -10,8 +10,8 @@
   "decisions": {
     "product": {
       "status": "approved",
-      "value": "Standalone read-only SalesDrone MCP npm package, extracted at the human request.",
-      "approval": "Human requested separate repository, npm automation, screenshots and Dynatrace/MCP observability in this chat; existing package stack/licence retained."
+      "value": "Standalone SalesDrone MCP npm package with Swagger-derived PAT read and write tools.",
+      "approval": "Human explicitly requested Swagger-listed CUD tools and new npm publication on 2026-11-06."
     },
     "stack": {
       "status": "approved",
@@ -25,7 +25,7 @@
     },
     "privacy": {
       "status": "approved",
-      "value": "Read-only scopes and current API policy; opt-in OTLP exports safe metadata only. No arguments/results, contacts, tokens or raw URLs in telemetry.",
+      "value": "Least-privilege PAT scopes and current API policy; opt-in OTLP exports safe metadata only. No arguments/results, contacts, tokens or raw URLs in telemetry.",
       "approval": "Human requested separate repository, npm automation, screenshots and Dynatrace/MCP observability in this chat; existing package stack/licence retained."
     },
     "observability": {

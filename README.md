@@ -5,22 +5,22 @@
 [![Lifecycle](https://github.com/theharithsa/salesdrone-mcp/actions/workflows/observe.yml/badge.svg)](https://github.com/theharithsa/salesdrone-mcp/actions/workflows/observe.yml)
 [![MIT](https://img.shields.io/badge/license-MIT-blue)](https://github.com/theharithsa/salesdrone-mcp/blob/main/LICENSE)
 
-Read current leads, tasks, recorded team work and a minimal people directory from any compatible local stdio MCP client. **21 read-only tools**, using the same scoped HTTP API as [SalesDrone by AvinyaTech](https://github.com/theharithsa/SalesDrone). This independent repository owns the MCP package, tests, documentation and npm releases. It does not host a remote MCP service.
+Read current leads, tasks, recorded team work and a minimal people directory from any compatible local stdio MCP client. **41 tools: 21 GET reads and 20 documented PAT operations**, using the same scoped HTTP API as [SalesDrone by AvinyaTech](https://github.com/theharithsa/SalesDrone). This independent repository owns the MCP package, tests, documentation and npm releases. It does not host a remote MCP service.
 
 ![Actual MCP tool discovery and synthetic lead results](https://raw.githubusercontent.com/theharithsa/salesdrone-mcp/main/docs/screenshots/protocol-desktop.jpg)
 
-The screenshot shows a documentation harness rendering actual `tools/list` and `tools/call` responses over local stdio with fictional API fixtures. It is not the SalesDrone app, a hosted MCP UI or production customer data. [Narrow browser capture](https://raw.githubusercontent.com/theharithsa/salesdrone-mcp/main/docs/screenshots/protocol-narrow.jpg) · [capture provenance](docs/screenshots/manifest.json).
+The historical **1.1.0** screenshot shows a documentation harness rendering actual `tools/list` and `tools/call` responses over local stdio with fictional API fixtures. It predates the write tools added in 1.2.0. It is not the SalesDrone app, a hosted MCP UI or production customer data. [Narrow browser capture](https://raw.githubusercontent.com/theharithsa/salesdrone-mcp/main/docs/screenshots/protocol-narrow.jpg) · [capture provenance](docs/screenshots/manifest.json).
 
 ## Install and connect
 
-Requires **Node.js 22.18+**, an MCP client supporting stdio and a SalesDrone personal access token. Create a PAT in SalesDrone's integration settings with only the read scopes you need. Keep the token in your client's secret/environment configuration; never commit it or put it in command arguments.
+Requires **Node.js 22.18+**, an MCP client supporting stdio and a SalesDrone personal access token. Create a PAT in SalesDrone's integration settings with only the scopes you need; grant write scopes only for actions you intend to authorize. Keep the token in your client's secret/environment configuration; never commit it or put it in command arguments.
 
 ```json
 {
   "mcpServers": {
     "salesdrone": {
       "command": "npx",
-      "args": ["--yes", "@theharithsa/salesdrone-mcp@1.1.0"],
+      "args": ["--yes", "@theharithsa/salesdrone-mcp@1.2.0"],
       "env": {
         "SALESDRONE_API_TOKEN": "<your personal access token>"
       }
@@ -29,7 +29,7 @@ Requires **Node.js 22.18+**, an MCP client supporting stdio and a SalesDrone per
 }
 ```
 
-Use your client's equivalent configuration if its schema differs. You can also install with `npm install --global @theharithsa/salesdrone-mcp@1.1.0` and use `salesdrone-mcp` as the command. `salesdrone-mcp --help` and `--version` work without a token. Normal stdout contains only MCP protocol messages.
+Use your client's equivalent configuration if its schema differs. You can also install with `npm install --global @theharithsa/salesdrone-mcp@1.2.0` and use `salesdrone-mcp` as the command. `salesdrone-mcp --help` and `--version` work without a token. Normal stdout contains only MCP protocol messages.
 
 Example prompts:
 
@@ -40,7 +40,7 @@ Example prompts:
 
 ## Tools and permissions
 
-All tool names start with `salesdrone_`. Every route is a fixed **GET** to the [versioned SalesDrone API](https://sales-drone-avinya.firebaseapp.com/api/docs); API contract **1.29.0** is the compatibility baseline.
+All tool names start with `salesdrone_`. Every tool uses a fixed documented method and path to the [versioned SalesDrone API](https://sales-drone-avinya.firebaseapp.com/api/docs); API contract **1.29.0** is the compatibility baseline.
 
 | Tools (prefix omitted) | Required PAT scope |
 | --- | --- |
@@ -56,7 +56,45 @@ All tool names start with `salesdrone_`. Every route is a fixed **GET** to the [
 | `list_people` | `people:read`, active Admin owner |
 | `get_team`, `list_member_activities` | `team:read`, active Admin owner |
 
-Existing PATs gain no new scopes automatically. Current membership, revocation, expiry, recipient policy and assigned/all lead scope remain enforced by the API. A read call can update API rate-limit and token-last-used metadata, but cannot change business records. The package has no Firestore or cloud credentials and no arbitrary URL/request/write tool.
+Existing PATs gain no new scopes automatically. Current membership, revocation, expiry, recipient policy and assigned/all lead scope remain enforced by the API. A read call can update API rate-limit and token-last-used metadata, but cannot change business records. The package has no Firestore or cloud credentials and no arbitrary URL/request tool.
+
+### Create, update and delete operations
+
+These tools inherit the [Swagger contract](https://sales-drone-avinya.firebaseapp.com/api/docs), including API permissions and current owner access. No Google/App Check-only administration endpoint is exposed. People can be listed and leads assigned, but people cannot be created/deleted through a PAT. Lead removal is archive; permanent data reset is excluded.
+
+| Tools (prefix omitted) | Required PAT scope |
+| --- | --- |
+| `create_lead` | `leads:create` |
+| `update_lead` | `leads:edit` |
+| `archive_lead`, `restore_lead` | `leads:archive` |
+| `assign_lead` | `assignments:write` |
+| `create_activity`, `correct_activity` | `activities:write` |
+| `create_task`, `update_task`, `delete_task`, `update_automatic_reminder` | `tasks:write` |
+| `reserve_attachment`, `upload_attachment`, `delete_attachment` | `attachments:write` |
+| `preview_lead_batch`, `apply_lead_batch` | `leads:bulk-edit`; reassignment also needs `assignments:write` |
+| `preview_import`, `commit_import` | `imports:write` |
+| `update_notification` | `notifications:write` |
+| `export_leads` (paged read via POST) | `leads:export` |
+
+Use writes only for explicit user-authorized actions. Inputs use `id`/`attachmentId` for path identifiers and a **`body` object matching Swagger**. Required `Idempotency-Key` headers are supplied as **`idempotencyKey`**, a caller-provided UUID. Tools never generate retry keys or automatically retry writes. Read the current record first and supply its `expectedVersion` or activity `expectedRevision` wherever required. A conflict requires a fresh read and a reviewed change; do not silently overwrite concurrent edits. Compound activity stage/follow-up actions require the extra scopes documented by Swagger.
+
+Example `salesdrone_update_lead` arguments:
+
+```json
+{"id":"<lead-id>","body":{"expectedVersion":3,"stage":"Qualified"}}
+```
+
+Example `salesdrone_create_task` arguments:
+
+```json
+{"idempotencyKey":"<caller-generated UUID>","body":{"title":"Follow up","dueAt":"2026-12-01T10:00:00Z","leadId":"<lead-id>"}}
+```
+
+On a timeout, cancellation, malformed/oversized response or connection failure, a write **may already have committed**. Verify current state before retrying. Where supported, reuse the original UUID and identical body. Version guards protect other updates. Tool annotations distinguish read-only preview/export from mutations; they are hints for the host, not authorization.
+
+Attachments use two steps: reserve metadata with a UUID, then upload canonical `contentBase64` with the returned attachment ID. Decoded content is limited to 8 MiB; file paths and remote fetch URLs are never accepted. API type, reserver and expiry checks remain authoritative. JSON requests have a local 10 MiB ceiling; responses remain bounded to 2 MiB. Bulk edits accept at most 25 explicit versioned leads. Import preview accepts mapped rows, not a workbook path, and can create an import job. `preview_lead_batch` and `export_leads` do not mutate lead records; other new tools are conservatively marked destructive.
+
+The reviewed contract snapshot is [docs/openapi.json](docs/openapi.json). `node scripts/sync-api-contract.mjs --check` and contract tests prevent drift between that snapshot and packaged schemas/allowlists. To adopt a newer Swagger contract, review its diff, update the snapshot, then run the sync script and release a checked version. Runtime does not dynamically discover or execute new endpoints. [Full operation mapping](docs/api-tools.md).
 
 **Interpretation matters.** Team reports show recorded work, not online presence or an employee rating. Task metrics attribute responsibility to the recipient. Reports are current reads, not transactional historical snapshots. A stage distribution is not historical conversion. People output contains ID, display name and active membership, not email or security grants. Personal reminders remain private.
 
@@ -92,7 +130,7 @@ Use separate Dynatrace ingestion credentials with logs, metrics and traces inges
 - `salesdrone.mcp.tool.calls`, `.tool.duration`, `.tool.active`, `.http.requests`, `.http.duration` and `.process.memory.rss` metrics. Durations use seconds, memory uses bytes.
 - Resource identity: `service.name=salesdrone-mcp`, namespace `avinyatech`, package version, build commit and random instance ID.
 
-No arguments/results, lead/member IDs, contact details, comments, task titles, token values, URL queries or raw exceptions are exported. Span/log queues and shutdown are bounded. Configuration/export failures do not fail business reads; invalid configuration emits only a static stderr message. Telemetry is best effort and can be lost on forced termination or collector outages. OTLP acceptance does not prove tenant searchability. [Architecture, limits and verification](docs/observability.md).
+No arguments/results, lead/member IDs, contact details, comments, task titles, token values, URL queries or raw exceptions are exported. Span/log queues and shutdown are bounded. Configuration/export failures do not fail business operations; invalid configuration emits only a static stderr message. Telemetry is best effort and can be lost on forced termination or collector outages. OTLP acceptance does not prove tenant searchability. [Architecture, limits and verification](docs/observability.md).
 
 ## Automated publication and lifecycle events
 

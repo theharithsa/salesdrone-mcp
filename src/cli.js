@@ -6,7 +6,7 @@ import { startTelemetry } from "./telemetry.js";
 import { VERSION } from "./version.js";
 if (process.argv.includes("--help")) {
   console.log(
-    "salesdrone-mcp: read-only stdio MCP server\nRequires SALESDRONE_API_TOKEN. Optional SALESDRONE_API_URL (HTTPS /api/v1 base).\nOptional telemetry: SALESDRONE_OTEL_ENABLED=true plus standard OTLP endpoint/headers. stdout is reserved for MCP messages.",
+    "salesdrone-mcp: scoped read/write stdio MCP server\nRequires SALESDRONE_API_TOKEN. Optional SALESDRONE_API_URL (HTTPS /api/v1 base).\nOptional telemetry: SALESDRONE_OTEL_ENABLED=true plus standard OTLP endpoint/headers. stdout is reserved for MCP messages.",
   );
 } else if (process.argv.includes("--version")) console.log(VERSION);
 else {

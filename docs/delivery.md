@@ -1,6 +1,6 @@
 # Independent release delivery
 
-Repository: theharithsa/salesdrone-mcp, public, main. Package: @theharithsa/salesdrone-mcp. Source changes require an issue, target milestone and checked PR. Candidate 1.1.0 belongs to milestone 1 / issue 1; do not bump repeatedly during review. App/API versions are independent.
+Repository: theharithsa/salesdrone-mcp, public, main. Package: @theharithsa/salesdrone-mcp. Source changes require an issue, target milestone and checked PR. Candidate 1.2.0 belongs to milestone 2 / issue 9; do not bump repeatedly during review. App/API versions are independent.
 
 `publish.yml`: pull requests verify without secrets; pushes/merges to main verify then publish using environment `npm`. Node 22, npm 11.19.0, pinned actions. Trusted publisher configuration must match owner/repo, `publish.yml`, environment `npm`, allow-publish. Configure with `npm trust github @theharithsa/salesdrone-mcp --file=publish.yml --repo=theharithsa/salesdrone-mcp --env=npm --allow-publish --yes`; npm requires user MFA. No long-lived NPM_TOKEN is needed. Restrict the environment to main and configure required branch checks per repository policy. Never bypass failed checks.
 

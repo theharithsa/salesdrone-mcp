@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.2.0 — 2026-11-06
+
+- Add 20 Swagger-derived PAT operations alongside 21 reads; no unlisted or Google-only endpoints.
+- Preserve strict write schemas, version/revision guards and caller UUID idempotency keys; never automatically retry mutations.
+- Bound base64 attachments, reject arbitrary routes, surface safe conflicts and record private method-aware OTel.
+- Add reproducible OpenAPI projection, all-operation stdio/contract/negative tests and write-scope/setup documentation.
+
 ## [1.1.0] - 2026-11-04
 
 - Move the compatible read-only stdio adapter to its own repository and npm release workflow.

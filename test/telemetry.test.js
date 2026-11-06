@@ -88,18 +88,24 @@ test("OTLP protobuf spans, correlated logs, metrics and HTTP propagation remain 
     .flatMap((r) =>
       r.data.resourceSpans.flatMap((s) => s.scopeSpans.flatMap((s) => s.spans)),
     );
-  assert.equal(spans.length, 6);
+  assert.equal(spans.length, 10);
   const roots = spans.filter((s) => s.kind === 2),
     children = spans.filter((s) => s.kind === 3);
-  assert.equal(roots.length, 3);
-  assert.equal(children.length, 3);
+  assert.equal(roots.length, 5);
+  assert.equal(children.length, 5);
   for (const c of children) {
     const root = roots.find((r) => r.traceId === c.traceId);
     assert.ok(root);
     assert.equal(c.parentSpanId, root.spanId);
   }
-  assert.equal(new Set(roots.map((r) => r.traceId)).size, 3);
+  assert.equal(new Set(roots.map((r) => r.traceId)).size, 5);
   assert.ok(headers.every((h) => /^00-[a-f0-9]{32}-[a-f0-9]{16}-01$/.test(h)));
+  assert.ok(children.some((s) => s.name === "HTTP PATCH /leads/:id"));
+  assert.ok(
+    children.some(
+      (s) => s.name === "HTTP PUT /leads/:id/attachments/:attachmentId/content",
+    ),
+  );
   const logs = received
     .filter((r) => r.signal === "logs")
     .flatMap((r) =>
@@ -107,7 +113,7 @@ test("OTLP protobuf spans, correlated logs, metrics and HTTP propagation remain 
         s.scopeLogs.flatMap((s) => s.logRecords),
       ),
     );
-  assert.equal(logs.length, 6);
+  assert.equal(logs.length, 10);
   for (const l of logs)
     assert.ok(
       spans.some((s) => s.traceId === l.traceId && s.spanId === l.spanId),
@@ -127,6 +133,9 @@ test("OTLP protobuf spans, correlated logs, metrics and HTTP propagation remain 
   const serialized = JSON.stringify(received);
   for (const secret of [
     "PRIVATE_CUSTOMER_SENTINEL",
+    "PRIVATE_WRITE_SENTINEL",
+    "PRIVATE_BINARY_SENTINEL",
+    "private-file",
     "private-customer",
     "private-id",
     "failure-id",
@@ -155,5 +164,5 @@ test("telemetry is opt-in; configuration, error labels and routes are bounded", 
     normalizedRoute("/team/members/private/activities"),
     "/team/members/:uid/activities",
   );
-  assert.equal(safeError(Error("secret")), "READ_FAILED");
+  assert.equal(safeError(Error("secret")), "REQUEST_FAILED");
 });

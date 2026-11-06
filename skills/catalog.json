@@ -152,19 +152,23 @@
       ],
       "entrypoints": [
         "src/cli.js",
-        "src/server.js"
+        "src/server.js",
+        "scripts/sync-api-contract.mjs"
       ],
       "owner": "theharithsa",
       "status": "active",
       "dependsOn": [],
       "contracts": [
         "docs/observability.md",
-        "README.md"
+        "README.md",
+        "docs/openapi.json",
+        "docs/api-tools.md"
       ],
       "testCommands": [
         "npm test",
         "npm run check",
-        "npm run security:scan"
+        "npm run security:scan",
+        "node scripts/sync-api-contract.mjs --check"
       ],
       "continuation": "skills/service-mcp-server/continuation.md",
       "lastReviewedRevision": "5f849b3bdb31696b2bcb800b2df7c5ce5fdaaf9d"
