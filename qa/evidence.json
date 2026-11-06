@@ -2,46 +2,47 @@
   "$schema": "../schemas/evidence.schema.json",
   "schemaVersion": 1,
   "application": "SalesDrone MCP",
-  "revision": "23fca01ab5eec1daa072b88b370b335eb28b3def",
-  "release": "1.1.0",
+  "revision": "ceef9a50393941620153d1df06200374e52f4943",
+  "release": "1.2.0",
   "checks": [
     {
-      "id": "node-protocol-otlp-lifecycle-13-cases",
+      "id": "node-protocol-write-otlp-lifecycle-22-cases",
       "status": "passed",
-      "revision": "23fca01ab5eec1daa072b88b370b335eb28b3def",
+      "revision": "ceef9a50393941620153d1df06200374e52f4943",
       "command": "node --test --test-timeout=20000 --test-reporter=./scripts/test-reporter.mjs --test-reporter-destination=cases.ndjson test/*.test.js",
-      "observedAt": "2026-11-03T19:29:35Z",
-      "environment": "GitHub Actions Node22 / synthetic fixtures",
-      "artifact": "https://github.com/theharithsa/salesdrone-mcp/actions/runs/41703700082"
+      "observedAt": "2026-11-06T11:16:29Z",
+      "environment": "GitHub Actions Node22 / isolated synthetic fixtures",
+      "artifact": "https://github.com/theharithsa/salesdrone-mcp/actions/runs/42208989044"
     },
     {
       "id": "foundation-21-cases",
       "status": "passed",
-      "revision": "23fca01ab5eec1daa072b88b370b335eb28b3def",
+      "revision": "ceef9a50393941620153d1df06200374e52f4943",
       "command": "sh scripts/check.sh",
-      "observedAt": "2026-11-03T19:29:29Z",
-      "environment": "GitHub Actions Python3.12 / synthetic temporary repositories",
-      "artifact": "https://github.com/theharithsa/salesdrone-mcp/actions/runs/41703700135"
+      "observedAt": "2026-11-06T11:16:30Z",
+      "environment": "GitHub Actions / synthetic temporary repositories",
+      "artifact": "https://github.com/theharithsa/salesdrone-mcp/actions/runs/42208989044"
     }
   ],
   "limits": [
-    "Evidence binds to the recorded source revision. Later metadata/documentation heads require their own checked PR.",
-    "Runtime tenant checks used fictional loopback API data, not customer reads/writes.",
-    "Synthetic browser screenshots do not certify physical-device/native Safari behavior."
+    "All runtime verification uses synthetic loopback API fixtures with actual installed package and real OTLP forwarding; no production customer reads or writes.",
+    "The SalesDrone website/API deployment is unchanged. Its API owns authorization, transactions and committed business events.",
+    "Historical1.1.0 screenshots are not restamped; no new browser, physical-device or native Safari certification.",
+    "Default npm metadata cache briefly returned ETARGET after publication; a fresh cache installed and verified the version by normal package name."
   ],
   "lifecycle": {
-    "issueUrl": "https://github.com/theharithsa/salesdrone-mcp/issues/3",
-    "pullRequestUrl": "https://github.com/theharithsa/salesdrone-mcp/pull/4",
-    "checkedHeadSha": "609c8d81a58efca9ef66815c7f620680af3a8619",
-    "mergeSha": "23fca01ab5eec1daa072b88b370b335eb28b3def",
+    "issueUrl": "https://github.com/theharithsa/salesdrone-mcp/issues/9",
+    "pullRequestUrl": "https://github.com/theharithsa/salesdrone-mcp/pull/10",
+    "checkedHeadSha": "ed82173a58e8ea83f183af43e3b4355954e107ac",
+    "mergeSha": "ceef9a50393941620153d1df06200374e52f4943",
     "issueResolution": "completed",
-    "deploymentId": "npm @theharithsa/salesdrone-mcp@1.1.0",
-    "artifactDigest": "sha512-x/chkURda0F13xARtcjd+Pm1sXFGAfiqBuOhj821cj9mam2ac3y8GjIl+oBq8LX8Rha/fv+m41g+j0Jg1URkyg==",
+    "deploymentId": "npm @theharithsa/salesdrone-mcp@1.2.0",
+    "artifactDigest": "sha512-XgdoX9MAjBDo7NZhYNUGWlRkMep1u0rJ+l71un4kx5JxdNo2njsJx/oZSO3QLgDCGeBggAn07VI8MgzsKk/qkw==",
     "sdlcEvidence": [
       {
-        "artifact": "docs/releases/1.1.0.json",
+        "artifact": "docs/releases/1.2.0.json",
         "status": "tenant-verified",
-        "sourceRun": 41703700082
+        "sourceRun": 42208989044
       }
     ]
   }

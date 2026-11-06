@@ -1,0 +1,111 @@
+{
+  "schemaVersion": 1,
+  "package": "@theharithsa/salesdrone-mcp",
+  "version": "1.2.0",
+  "observedAt": "2026-11-06T11:23:43.135711+00:00",
+  "publication": {
+    "name": "@theharithsa/salesdrone-mcp",
+    "version": "1.2.0",
+    "reportingRevision": "ceef9a50393941620153d1df06200374e52f4943",
+    "runId": "42208989044",
+    "status": "verified",
+    "submittedRevision": "ceef9a50393941620153d1df06200374e52f4943",
+    "publicationRevision": "ceef9a50393941620153d1df06200374e52f4943",
+    "integrity": "sha512-XgdoX9MAjBDo7NZhYNUGWlRkMep1u0rJ+l71un4kx5JxdNo2njsJx/oZSO3QLgDCGeBggAn07VI8MgzsKk/qkw==",
+    "tarball": "https://registry.npmjs.org/@theharithsa/salesdrone-mcp/-/salesdrone-mcp-1.2.0.tgz",
+    "attestations": "https://registry.npmjs.org/-/npm/v1/attestations/@theharithsa%2fsalesdrone-mcp@1.2.0"
+  },
+  "githubRelease": "https://github.com/theharithsa/salesdrone-mcp/releases/tag/v1.2.0",
+  "ci": {
+    "sourceRevision": "ceef9a50393941620153d1df06200374e52f4943",
+    "run": "https://github.com/theharithsa/salesdrone-mcp/actions/runs/42208989044",
+    "nodeCases": 22,
+    "foundationCases": 21,
+    "allPassed": true,
+    "checkedPr": "https://github.com/theharithsa/salesdrone-mcp/pull/10",
+    "checkedHead": "ed82173a58e8ea83f183af43e3b4355954e107ac",
+    "registryInstalledSuitesCases": 11,
+    "registryInstalledScope": "Protocol/write suites: four real stdio cases use the registry-installed CLI to discover 41 tools and execute all21 GET +20 PAT operations. Remaining cases check source helpers/schema/packaging. No customer writes.",
+    "registrySignaturesVerified": 56,
+    "attestationsVerified": 39,
+    "dependencyVulnerabilities": 0
+  },
+  "contract": {
+    "apiVersion": "1.29.0",
+    "source": "https://sales-drone-avinya.firebaseapp.com/openapi.json",
+    "snapshot": "docs/openapi.json",
+    "snapshotSha256": "4f7532f7703dfdc0cac2f20729ad7b2e8a372233d62669c28e4c5f7ab6ea15b1",
+    "liveSnapshotRecheckedEqual": true,
+    "getTools": 21,
+    "nonGetPatTools": 20,
+    "excluded": "Unlisted operations and Google/App Check-only endpoints. No permanent lead deletion."
+  },
+  "runtime": {
+    "package": "1.2.0",
+    "commit": "ceef9a50393941620153d1df06200374e52f4943",
+    "environment": "test; actual installed stdio package with isolated synthetic API; real Dynatrace OTLP forwarding",
+    "receipts": [
+      {
+        "signal": "/v1/traces",
+        "status": 200,
+        "rejected": 0,
+        "bytes": 1884
+      },
+      {
+        "signal": "/v1/logs",
+        "status": 200,
+        "rejected": 0,
+        "bytes": 1984
+      },
+      {
+        "signal": "/v1/metrics",
+        "status": 200,
+        "rejected": 0,
+        "bytes": 4945
+      }
+    ],
+    "traceIds": [
+      "5a77c78653a101c52c3db84bb9f32d8c",
+      "707e635d0660727319bea0dfe817e7ef",
+      "fe022355ecf430e57902f0d7635a61ed",
+      "786801a55f5f89960014804e7432e656"
+    ],
+    "stderrEmpty": true,
+    "tenantSearchVerified": true,
+    "tenantCounts": {
+      "toolSpans": 4,
+      "httpChildSpans": 4,
+      "correlatedLogs": 8,
+      "toolCallMetric": 4
+    },
+    "tenantCorrelation": "All 8 log trace_id/span_id pairs match actual span trace.id/span.id. Four client span.parent_id values match their tool root span.id. No native UI navigation claim."
+  },
+  "lifecycle": {
+    "provider": "avinyatech.salesdrone.mcp.sdlc",
+    "verifiedCurrentRun": 42208989044,
+    "workflowSuccess": 1,
+    "jobSuccess": 2,
+    "stepSuccess": 22,
+    "passedTestRecords": 22,
+    "caseRecordsReconciledWithArtifact": true,
+    "observerRun": "https://github.com/theharithsa/salesdrone-mcp/actions/runs/42209486106",
+    "releaseEventVerified": true,
+    "issue9ClosedAndPr10MergedTenantVerified": true,
+    "limits": "Stable IDs permit deduplication; no exactly-once ingest claim. Initial main test query was partially ingested (16/22); later independent query reconciled all22 exact case IDs."
+  },
+  "authorReview": {
+    "productionReadiness": "Pass: src/api-client.js:45 fixed documented method/path routes, bounds, UUID keys and no automatic retries.",
+    "codeQuality": "Pass: src/write-tools.js:9 separates generated schemas from transport; syntax and projection checks.",
+    "userExperience": "Pass: README write scope matrix, body/key examples and conflict/uncertain-outcome guidance.",
+    "testCoverage": "Pass: test/writes.test.js all20 operations over actual stdio, plus contract/negative/privacy tests.",
+    "documentation": "Pass: Swagger snapshot/projection, README/security/skills/release impact updated.",
+    "githubPages": "N/A: no site/UI changes; historical1.1.0 captures retain provenance.",
+    "pullRequest": "Pass: issue9 linked to checked PR10; no independent reviewer approval claimed."
+  },
+  "limits": [
+    "All runtime verification uses synthetic loopback API fixtures with actual installed package and real OTLP forwarding; no production customer reads or writes.",
+    "The SalesDrone website/API deployment is unchanged. Its API owns authorization, transactions and committed business events.",
+    "Historical1.1.0 screenshots are not restamped; no new browser, physical-device or native Safari certification.",
+    "Default npm metadata cache briefly returned ETARGET after publication; a fresh cache installed and verified the version by normal package name."
+  ]
+}
