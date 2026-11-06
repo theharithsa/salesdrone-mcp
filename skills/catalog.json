@@ -171,7 +171,7 @@
         "node scripts/sync-api-contract.mjs --check"
       ],
       "continuation": "skills/service-mcp-server/continuation.md",
-      "lastReviewedRevision": "5f849b3bdb31696b2bcb800b2df7c5ce5fdaaf9d"
+      "lastReviewedRevision": "ceef9a50393941620153d1df06200374e52f4943"
     },
     {
       "id": "sdlc-observer",
